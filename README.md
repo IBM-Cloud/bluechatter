@@ -42,12 +42,22 @@ Next you need to create a Redis service for the app to use.
 
     $ cf create-service redis 100 redis-chatter
 
+### Using The Cloud Foundry CLI
+
 Now just push the app, we have a manifest.yml file so the command 
 is very simple.
     
     $ git clone https://github.com/CodenameBlueMix/bluechatter.git	
 	$ cd blue-chatter
     $ cf push my-bluemix-chatter-app-name
+
+### Using IBM DevOps Services (JazzHub)
+If you would like you can also deploy the project to BlueMix using
+IBM's DevOps Services (JazzHub).  You can find the project 
+[here](https://hub.jazz.net/project/rjbaxter/bluechatter/overview) on
+JazzHub.  To deploy you will need to login to JazzHub. Then click
+Edit Code in the upper right hand corner.  In the editor click the 
+Deploy button in the toolbar.
 
 ## Scaling The App
 
