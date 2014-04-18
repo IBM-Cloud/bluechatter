@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+ * Copyright IBM Corp. 2014
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BlueChatter</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link href="stylesheets/style.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div id="main-container">
+      <h1>BlueChatter</h1>
+      <div class="user-form center">
+        <h3 class="form-signin-heading">Enter a username to get started</h3>
+        <input id="user-name" class="form-control" placeholder="Username" required="" autofocus="">
+        <button class="btn btn-lg btn-primary btn-block go-user" type="submit">Go!</button>
+      </div>
+
+      <div class="chat-box well well-lg" style="display: none;">
+        <div class="jumbotron">
+          <h1>It Is Quiet In Here!</h1>
+          <p>No one has said anything yet, type something insightful in the text box below and press enter!</p>
+        </div>
+        <div class="message-area">
+        </div>
+      </div>
+      <div class="chat-box" style="display: none;">
+        <textarea id="message-input" placeholder="Type something insightful!" class="form-control" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="footer center">
+      <p>Built By The BlueMix Dev Advocate Team</p>
+      <p id="instance-id" style="display: none;">Instance ID: <span id="instance-id-value"></span></p>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="javascripts/client.js"></script>
+  </body>
+</html>
