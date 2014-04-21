@@ -6,7 +6,7 @@ chatting.
 For a demonstration of this application you can watch the following 
 YouTube video.
 
-[![BlueChatter](https://img.youtube.com/vi/i7_dQQy40ZQ/3.jpg?time=1398101975441)](http://youtu.be/i7_dQQy40ZQ)
+[![BlueChatter](https://img.youtube.com/vi/i7_dQQy40ZQ/0.jpg?time=1398101975441)](http://youtu.be/i7_dQQy40ZQ)
 
 
 ## Technologies
