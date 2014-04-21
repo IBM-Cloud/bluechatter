@@ -3,6 +3,12 @@ The BlueChatter app is a very simple chat/IRC type app for your browser.
 It is very basic, you just go to the app, enter a user name and start
 chatting.
 
+For a demonstration of this application you can watch the following 
+YouTube video.
+
+[![BlueChatter](https://i1.ytimg.com/vi/i7_dQQy40ZQ/3.jpg?time=1398101975441)](http://youtu.be/i7_dQQy40ZQ)
+
+
 ## Technologies
 BlueChatter uses [Node.js](http://nodejs.org/) and 
 [Express](http://expressjs.com/) for the server.  On the frontend 
@@ -48,7 +54,7 @@ Now just push the app, we have a manifest.yml file so the command
 is very simple.
     
     $ git clone https://github.com/CodenameBlueMix/bluechatter.git	
-	$ cd blue-chatter
+	$ cd bluechatter
     $ cf push my-bluemix-chatter-app-name
 
 ### Using IBM DevOps Services (JazzHub)
