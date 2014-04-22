@@ -96,3 +96,8 @@ on your mobile device and try it there as well.
 
 This code is licensed under Apache v2.  See the LICENSE file in the root of
 the repository.
+
+## Dependencies
+
+For a list of 3rd party dependencies that are used see the package.json file
+in the root of the repository.
