@@ -91,3 +91,8 @@ AND NOT TWO TABS IN THE SAME BROWSER.  Since we are using long polling
 browsers will not actually make the same request to the same endpoint
 while one request is still pending.  You can also open the app in a browser
 on your mobile device and try it there as well.
+
+## License
+
+This code is licensed under Apache v2.  See the LICENSE file in the root of
+the repository.
