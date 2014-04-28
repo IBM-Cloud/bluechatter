@@ -44,9 +44,9 @@ are logged in.
 
     $ cf login -a https://api.ng.bluemix.net
 
-Next you need to create a Redis service for the app to use.
+Next you need to create a Redis service for the app to use.  Lets use the RedisCloud service.
 
-    $ cf create-service redis 100 redis-chatter
+    $ cf create-service rediscloud 25mb redis-chatter
 
 ### Using The Cloud Foundry CLI
 

@@ -42,11 +42,11 @@ var credentials = !redisService || redisService == null ?
 {"host":"127.0.0.1", "port":6379} : redisService.credentials;
 
 // We need 2 Redis clients one to listen for events, one to publish events
-var subscriber = redis.createClient(credentials.port, credentials.host);
+var subscriber = redis.createClient(credentials.port, credentials.hostname);
 subscriber.on("error", function(err) {
   console.error('There was an error with the redis client ' + err);
 });
-var publisher = redis.createClient(credentials.port, credentials.host);
+var publisher = redis.createClient(credentials.port, credentials.hostname);
 publisher.on("error", function(err) {
   console.error('There was an error with the redis client ' + err);
 });
