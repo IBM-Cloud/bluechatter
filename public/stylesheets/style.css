@@ -15,37 +15,37 @@
  */
 
 #main-container {
-	margin: 0 auto;
+  margin: 0 auto;
 }
 
 #main-container h1 {
-	text-align: center;
+  text-align: center;
 }
 
 .center {
-	text-align: center;
-	max-width: 430px;
-	padding: 15px;
-	margin: 0 auto;
+  text-align: center;
+  max-width: 430px;
+  padding: 15px;
+  margin: 0 auto;
 }
 
 .go-user {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .chat-box {
-	max-width: 930px;
-	padding: 15px;
-	margin: 0 auto;
+  max-width: 930px;
+  padding: 15px;
+  margin: 0 auto;
 }
 
 .message-area {
-	max-height: 500px;
-	overflow: auto;
+  max-height: 500px;
+  overflow: auto;
 }
 
 .footer {
-	padding-top: 19px;
-    color: #777;
-    border-top: 1px solid #e5e5e5;
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
 }

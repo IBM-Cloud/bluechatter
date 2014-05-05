@@ -14,29 +14,20 @@
 // limitations under the License.
 //------------------------------------------------------------------------------
 
-// Boilerplate setup code
-var express = require('express');
+var express = require("express");
+var fs = require('fs');
 var http = require('http');
 var path = require('path');
-var fs = require('fs');
-var redis = require('redis');
 var cfEnv = require("cf-env");
 var pkg   = require("./package.json");
-var app = express();
+var redis = require('redis');
+
 var cfCore = cfEnv.getCore({name: pkg.name});
-var instanceId = cfCore.app && cfCore.app != null ? cfCore.app.instance_id : undefined;
-
-// Express setup
+var app = express();
 app.set('port', cfCore.port || 3000);
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
-//Setup Redis
 var redisService = cfEnv.getService('redis-chatter');
 var credentials = !redisService || redisService == null ?  
 {"host":"127.0.0.1", "port":6379} : redisService.credentials;
@@ -55,40 +46,24 @@ if (credentials.password != '') {
   publisher.auth(credentials.password);
 }
 
-// Subscribe to the message event and listen on the messages channel
 subscriber.on('message', function(channel, msg) {
-  if(channel === 'messages') {
+  if(channel === 'chatter') {
     while(clients.length > 0) {
       var client = clients.pop();
       client.end(msg);
     }
   }
 });
-subscriber.subscribe('messages');
+subscriber.subscribe('chatter');
 
-// This interval will clean up all the clients every minute to avoid timeouts
-setInterval(function() {
-  while(clients.length > 0) {
-    var client = clients.pop();
-    client.writeHeader(204);
-    client.end();
-  }
-}, 60000);
-
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-var clients = [];
-
-// Server up our static resources
+// Serve up our static resources
 app.get('/', function(req, res) {
   fs.readFile('./public/index.html', function(err, data) {
     res.end(data);
   });
 });
 
+var clients = [];
 // Poll endpoint
 app.get('/poll/*', function(req, res) {
   clients.push(res);
@@ -97,11 +72,11 @@ app.get('/poll/*', function(req, res) {
 // Msg endpoint
 app.post('/msg', function(req, res) {
   message = req.body;
-  message.time = Date.now();
-  publisher.publish("messages", JSON.stringify(message));
+  publisher.publish("chatter", JSON.stringify(message));
   res.end();
 });
 
+var instanceId = cfCore.app && cfCore.app != null ? cfCore.app.instance_id : undefined;
 app.get('/instanceId', function(req, res) {
   if(!instanceId) {
     res.writeHeader(204);
@@ -112,6 +87,15 @@ app.get('/instanceId', function(req, res) {
     }));
   }
 });
+
+// This interval will clean up all the clients every minute to avoid timeouts
+setInterval(function() {
+  while(clients.length > 0) {
+    var client = clients.pop();
+    client.writeHeader(204);
+    client.end();
+  }
+}, 60000);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
