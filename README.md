@@ -39,6 +39,10 @@ scale nicely to meet the demand of its users.
 
 ## Deploying To BlueMix
 
+The easiest way to deploy BlueChatter is to click the below button.
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)
+
+### Using The Command Line
 Make sure you have the Cloud Foundry Command Line installed and you
 are logged in.
 
