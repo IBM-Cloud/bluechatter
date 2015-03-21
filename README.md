@@ -39,7 +39,8 @@ scale nicely to meet the demand of its users.
 
 ## Deploying To BlueMix
 
-The easiest way to deploy BlueChatter is to click the below button.
+The easiest way to deploy BlueChatter is to click the "Deploy to Bluemix"
+button below.
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)
 
