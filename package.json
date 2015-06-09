@@ -2,11 +2,18 @@
   "name": "BlueChatter",
   "version": "0.0.1",
   "scripts": {
+    "install": "node admin.js track",
     "start": "node app.js"
   },
   "dependencies": {
     "express": "3.4.8",
     "redis": "*",
-    "cf-env": "*"
+    "cf-env": "*",
+    "commander": "^2.6.0",
+    "http-post": "^0.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IBM-Bluemix/bluechatter.git"
   }
 }
