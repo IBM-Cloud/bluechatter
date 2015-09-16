@@ -13,13 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-declared-services:
-  redis-chatter:
-    label: rediscloud
-    plan:  25mb
-applications:
-- name: bluechatter
-  memory: 128M
-  command: node app.js
-  services:
-  - redis-chatter
+web:
+  build: .
+  ports:
+   - "80:80"
+   - "8080:8080"
+  links:
+   - redis
+redis:
+  image: redis

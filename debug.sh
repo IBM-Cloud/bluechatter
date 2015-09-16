@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright IBM Corp. 2015
 #
@@ -13,13 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-declared-services:
-  redis-chatter:
-    label: rediscloud
-    plan:  25mb
-applications:
-- name: bluechatter
-  memory: 128M
-  command: node app.js
-  services:
-  - redis-chatter
+node-inspector & node --debug-brk app.js
