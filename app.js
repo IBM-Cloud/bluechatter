@@ -48,7 +48,7 @@ if(!redisService || redisService == null) {
     //so we sleep here before we continue on and use these credentials to connect
     console.log('The app is running in a Docker container on Bluemix so we are ' +
       'sleeping for 90 seconds waiting for the networking to become active.');
-    //require('sleep').sleep(90);
+    require('sleep').sleep(90);
   }
   credentials = redisService.credentials;
 }
