@@ -71,6 +71,7 @@ JazzHub.  To deploy you will need to login to JazzHub. Then click
 Edit Code in the upper right hand corner.  In the editor click the 
 Deploy button in the toolbar.
 
+
 ## Scaling The App
 
 Since we are using Redis to send chat messages, you can scale this application
@@ -88,6 +89,89 @@ When you connect to app you can see which instance you are connecting to
 in the footer of the application.  If you have more than one instance
 running chances are the instance id will be different between two different
 browsers.
+
+### Docker
+
+Bluechatter can be run inside a Docker container locally or in the 
+IBM Containers Service in Bluemix.
+
+#### Running In A Docker Container Locally
+
+To run locally you must have Docker and Docker Compose installed locally.
+If you are using OSX or Windows, both should be installed by default
+when you install [Docker Toolbox](https://www.docker.com/toolbox).  For
+Linux users follow the [instructions](https://docs.docker.com/compose/install/)
+on the Docker site.
+
+Once you have Docker and Docker Compose installed run the following commands
+from the application root to start the Bluechatter application.
+
+```
+$ docker-compose build
+$ docker-compose up
+```
+On OSX and Windows you will need the IP address of your Docker Machine VM to test the application.
+Run the following command, replacing `machine-name` with the name of your Docker Machine.
+
+```
+$ docker-machine ip machine-name
+```
+Now that you have the IP go to your favorite browser and enter the IP in the address bar,
+you should see the app come up.  (The app is running on port 80 in the container.)
+
+On Linux you can just go to [http://localhost](http://localhost).
+
+#### Running The Container On Bluemix
+
+Before running the container on Bluemix you need to have gone through the steps to setup
+the IBM Container service on Bluemix.  Please review the 
+[documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before
+continuing.
+
+The following instruction assume you are using the [Cloud Foundry 
+CLI IBM Containers Plugin](https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html#container_cli_cfic_install).
+If you are not using the plugin, execute the equivalent commands for your CLI solution.
+
+Make sure you are logged into Bluemix from the Cloud Foundry CLI and the IBM Containers plugin.
+
+```
+$ cf login -a api.ng.bluemix.net
+$ cf ic login
+```
+
+After you have logged in you can build an image for the Bluechatter application on Bluemix.
+From the root of Bluechatter application run the following commnand replacing namespace
+with your namespace for the IBM Containers service.  (If you don't know what your namespace is
+run `$ cf ic namespace get`.)
+
+```
+$ cf ic build -t namespace/bluechatter ./
+```
+
+The above `build` command will push the code for Bluechatter to the IBM Containers Docker service
+and run a `docker build` on that code.  Once the build finishes the resulting image will be 
+deployed to your Docker registry on Bluemix.  You can verify this by running 
+
+```
+$ cf ic images
+```
+
+You should see a new image with the tag `namespace/bluechatter` listed in the images available to you.
+You can also verify this by going to the [catalog](https://console.ng.bluemix.net/catalog/) on Bluemix,
+in the containers section you should see the Bluechatter image listed.
+
+Before you can start a container from the image we are going to need a Redis service for our container to use.
+To do this in Bluemix we will need what is called a "bridge app".  Follow the [
+instructions](https://www.ng.bluemix.net/docs/containers/container_binding_ov.html#container_binding_ui) on
+Bluemix for how to create a bridge app from the UI.  Make sure you bind a 
+[Redis Cloud](https://console.ng.bluemix.net/catalog/redis-cloud/) service to the bridge
+app and name it "redis-chatter".
+
+Once your bridge app is created follow the 
+[instructions](https://www.ng.bluemix.net/docs/containers/container_single_ov.html#container_single_ui) 
+on Bluemix for deploying a container based on the Bluechatter image.  Make sure you request a public IP
+address, expose port 80, and bind to the bridge app you created earlier.  Once your container starts you
+go to the public IP address assigned to the app in your browser and you should see the Bluechatter UI.
 
 ## Testing
 
