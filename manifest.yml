@@ -16,7 +16,7 @@
 declared-services:
   redis-chatter:
     label: rediscloud
-    plan:  25mb
+    plan:  30mb
 applications:
 - name: bluechatter
   memory: 128M
