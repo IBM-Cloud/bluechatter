@@ -1,0 +1,170 @@
+---
+stages:
+- name: Build Stage
+  inputs:
+  - type: git
+    branch: master
+  triggers:
+  - type: commit
+  jobs:
+  - name: Build
+    type: builder
+- name: Deploy Stage
+  inputs:
+  - type: job
+    stage: Build Stage
+    job: Build
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy to dev
+    type: deployer
+    target:
+      url: ${CF_TARGET_URL}
+      organization: ${CF_ORGANIZATION}
+      space: ${CF_SPACE}
+      application: ${CF_APP}
+    script: |-
+      #!/bin/bash
+      cf push "${CF_APP}"
+
+      # View logs
+      #cf logs "${CF_APP}" --recent
+- name: Docker Build
+  inputs:
+  - type: job
+    stage: Build Stage
+    job: Build
+  triggers:
+  - type: stage
+  jobs:
+  - name: Build
+    type: builder
+    extension_id: ibm.devops.services.pipeline.container.builder
+    target:
+      url: ${CF_TARGET_URL}
+      organization: ${CF_ORGANIZATION}
+      space: ${CF_SPACE}
+    IMAGE_NAME: ${CF_APP}
+    USE_CACHED_LAYERS: 'true'
+    COMMAND: "#!/bin/bash\n# The following colors have been defined to help with presentation\
+      \ of logs: green, red, label_color, no_color.  \nlog_and_echo \"$LABEL\" \"\
+      Starting build script\"\n\n# The IBM Container Service CLI (ice), Git client\
+      \ (git), IDS Inventory CLI (ids-inv) and Python 2.7.3 (python) have been installed.\n\
+      # Based on the organization and space selected in the Job credentials are in\
+      \ place for both IBM Container Service and IBM Bluemix \n#####################\n\
+      # Run unit tests    #\n#####################\nlog_and_echo \"$LABEL\" \"No unit\
+      \ tests cases have been checked in\"\n\n######################################\n\
+      # Build Container via Dockerfile     #\n######################################\n\
+      \n# REGISTRY_URL=${CCS_REGISTRY_HOST}/${NAMESPACE}\n# FULL_REPOSITORY_NAME=${REGISTRY_URL}/${IMAGE_NAME}:${APPLICATION_VERSION}\n\
+      # If you wish to receive slack notifications, set SLACK_WEBHOOK_PATH as a property\
+      \ on the stage.\n\nif [ -f Dockerfile ]; then \n    log_and_echo \"$LABEL\"\
+      \ \"Building ${FULL_REPOSITORY_NAME}\"\n    ${EXT_DIR}/utilities/sendMessage.sh\
+      \ -l info -m \"New container build requested for ${FULL_REPOSITORY_NAME}\"\n\
+      \    # build image\n    BUILD_COMMAND=\"\"\n    if [ \"${USE_CACHED_LAYERS}\"\
+      \ == \"true\" ]; then \n        BUILD_COMMAND=\"build --pull --tag ${FULL_REPOSITORY_NAME}\
+      \ ${WORKSPACE}\"\n        ice_retry ${BUILD_COMMAND}\n        RESULT=$?\n  \
+      \  else \n        BUILD_COMMAND=\"build --no-cache --tag ${FULL_REPOSITORY_NAME}\
+      \ ${WORKSPACE}\"\n        ice_retry ${BUILD_COMMAND}\n        RESULT=$?\n  \
+      \  fi \n\n    if [ $RESULT -ne 0 ]; then\n        log_and_echo \"$ERROR\" \"\
+      Error building image\"\n        ice info \n        ice images\n        ${EXT_DIR}/print_help.sh\n\
+      \        ${EXT_DIR}/utilities/sendMessage.sh -l bad -m \"Container build of\
+      \ ${FULL_REPOSITORY_NAME} failed. $(get_error_info)\"\n        exit 1\n    else\n\
+      \        log_and_echo \"$SUCCESSFUL\" \"Container build of ${FULL_REPOSITORY_NAME}\
+      \ was successful\"\n        ${EXT_DIR}/utilities/sendMessage.sh -l good -m \"\
+      Container build of ${FULL_REPOSITORY_NAME} was successful\"\n    fi  \nelse\
+      \ \n    log_and_echo \"$ERROR\" \"Dockerfile not found in project\"\n    ${EXT_DIR}/utilities/sendMessage.sh\
+      \ -l bad -m \"Failed to get Dockerfile. $(get_error_info)\"\n    exit 1\nfi\
+      \  \n\n######################################################################################\n\
+      # Copy any artifacts that will be needed for deployment and testing to $WORKSPACE\
+      \    #\n######################################################################################\n\
+      echo \"IMAGE_NAME=${FULL_REPOSITORY_NAME}\" >> $ARCHIVE_DIR/build.properties"
+- name: Docker Deploy Stage
+  inputs:
+  - type: job
+    stage: Docker Build
+    job: Build
+  triggers:
+  - type: stage
+  properties:
+  - name: ROUTE_HOSTNAME
+    value: ${CF_APP}-container
+    type: text
+  - name: ROUTE_DOMAIN
+    value: mybluemix.net
+    type: text
+  - name: AUTO_RECOVERY
+    value: 'true'
+    type: text
+  - name: CONTAINER_SIZE
+    value: tiny
+    type: text
+  - name: BIND_TO
+    value: ${CF_APP}
+    type: text
+  jobs:
+  - name: Deploy
+    type: deployer
+    extension_id: ibm.devops.services.pipeline.docker.deploy.ice
+    target:
+      url: https://api.ng.bluemix.net
+      organization: ${CF_ORGANIZATION}
+      space: ${CF_SPACE}
+    PORT: '80'
+    CONTAINER_NAME: bluechatter
+    DEPLOY_TYPE: red_black
+    COMMAND: "#!/bin/bash\n# The following are some example deployment scripts.  Use\
+      \ these as is or fork them and include your updates here:\necho -e \"${label_color}Starting\
+      \ deployment script${no_color}\"\n\n\n# To view/fork this script goto: https://github.com/Osthanes/deployscripts\n\
+      # git_retry will retry git calls to prevent pipeline failure on temporary github\
+      \ problems\n# the code can be found in git_util.sh at https://github.com/Osthanes/container_deployer\n\
+      git_retry clone https://github.com/Osthanes/deployscripts.git deployscripts\n\
+      \n\n# You can deploy your Image as either a single Container or as a Container\
+      \ \n# Group.  A Container Group deploys a number of containers to enhance\n\
+      # scalability or reliability.  By default we will deploy as a single \n# container.\
+      \  To switch to a group deploy, comment out the line below\n# containing deploycontainer.sh\
+      \ and uncomment the line for deploygroup.sh\n\n# Deploy with containers:\n#\
+      \ Optional environment properties (can be set directly in this script, or defined\
+      \ as environment properties):\n#      NAME              Value         Description\n\
+      #   =============      =========     ==============\n#   BIND_TO           \
+      \  String       Specify a Bluemix application name that whose bound services\
+      \ you wish to make available to the container.  By default this is not set.\n\
+      #   CONTAINER_SIZE      String       Specify container size: pico (64), nano\
+      \ (128), micro (256), tiny (512), small (1024), medium (2048),\n#          \
+      \                                                  large (4096), x-large (8192),\
+      \ 2x-large (16384).\n#                                    Default is micro (256).\n\
+      #   CONCURRENT_VERSIONS Number       Number of versions of this container to\
+      \ leave active.  \n#                                    Default is 1\n#\n#/bin/bash\
+      \ deployscripts/deploycontainer.sh\n\n# Deploy Container Group:\n# Optional\
+      \ environment properties (can be set directly in this script, or defined as\
+      \ environment properties):\n#      NAME              Value         Description\n\
+      #   =============      =========     ==============\n#   ROUTE_HOSTNAME    \
+      \  String       Specify the Hostname for the Cloud Foundry Route you wish to\
+      \ assign to this container group.  By default this is not set.\n#   ROUTE_DOMAIN\
+      \        String       Specify domain name for the Cloud Foundry Route you wish\
+      \ to assign to this container group.  By default this is not set.\n#   BIND_TO\
+      \             String       Specify a Bluemix application name that whose bound\
+      \ services you wish to make available to the container.  By default this is\
+      \ not set.\n#   DESIRED_INSTANCES:  Number       Specify the number of instances\
+      \ in the group.  Default value is 1.\n#   AUTO_RECOVERY:      Boolean      Set\
+      \ auto-recovery to true/false.  Default value is false.\n\n#               \
+      \                     Default is false.\n#   CONTAINER_SIZE      String    \
+      \   Specify container size: pico (64), nano (128), micro (256), tiny (512),\
+      \ small (1024), medium (2048),\n#                                          \
+      \                  large (4096), x-large (8192), 2x-large (16384).\n#      \
+      \                              Default is micro (256).\n#   CONCURRENT_VERSIONS\
+      \ Number       Number of versions of this group to leave active.\n#        \
+      \                            Default is 1\n# IF YOU WANT CONTAINER GROUPS ..\
+      \ uncomment the next line, and comment out the previous deployment line (/bin/bash\
+      \ deployscripts/deploygroup.sh)\n/bin/bash deployscripts/deploygroup.sh\n\n\
+      RESULT=$?\n\n# source the deploy property file\nif [ -f \"${DEPLOY_PROPERTY_FILE}\"\
+      \ ]; then\n  source \"$DEPLOY_PROPERTY_FILE\"\nfi\n\n#########################\n\
+      # Environment DETAILS   #\n#########################\n# The environment has\
+      \ been setup.\n# The Cloud Foundry CLI (cf), IBM Container Service CLI (ice),\
+      \ Git client (git), IDS Inventory CLI (ids-inv) and Python 2.7.3 (python) have\
+      \ been installed.\n# Based on the organization and space selected in the Job\
+      \ credentials are in place for both IBM Container Service and IBM Bluemix\n\n\
+      # The following colors have been defined to help with presentation of logs:\
+      \ green, red, label_color, no_color.\nif [ $RESULT -ne 0 ]; then\n    echo -e\
+      \ \"${red}Executed failed or had warnings ${no_color}\"\n    ${EXT_DIR}/print_help.sh\n\
+      \    exit $RESULT\nfi\necho -e \"${green}Execution complete${no_label}\""
