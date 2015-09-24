@@ -24,8 +24,8 @@ As soon as the client gets a response from the server, regardless of whether tha
 response contains a message or not, the client will issue another request and
 the process continues.
 
-One of the goals of this application is to demonstrate scaling in BlueMix.
-As we know when you scale an application in BlueMix you essentially are
+One of the goals of this application is to demonstrate scaling in Bluemix.
+As we know when you scale an application in Bluemix you essentially are
 creating multiple instance of the same application which users will connect
 to at random.  In other words there are multiple BlueChatter servers running 
 at the same time.  So how do we communicate chat messages between the servers?
@@ -37,12 +37,23 @@ containing the message.  The other servers then get notifications of the new
 messages and notify their clients of the.  This design allows BlueChatter to
 scale nicely to meet the demand of its users.
 
-## Deploying To BlueMix
+## Deploying To Bluemix
 
 The easiest way to deploy BlueChatter is to click the "Deploy to Bluemix"
 button below.
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)
+
+Using the Deploy To Blumix button will automatically setup several things for you.  
+First it will create a Git repo in IBM DevOps Services containing the code for the applicaiton.
+In addition a deployment pipeline will automatically be setup and run which will deploy the
+application to Bluemix for you.  The deployment pipeline will both deploy the application as a
+Cloud Foundry application and in a Docker container.  Both versions of the application will
+share the same route (URL) in Bluemix so hitting that URL you will either be using the Cloud
+Foundry application or the Docker container.  In addition to deploying the app using Cloud
+Foundry and Docker the pipeline will build a Docker image and place it in your Docker 
+registry on Bluemix so you can deploy additional containers based on that image if you want.
+
 
 ### Using The Command Line
 Make sure you have the Cloud Foundry Command Line installed and you
@@ -59,17 +70,9 @@ Next you need to create a Redis service for the app to use.  Lets use the RedisC
 Now just push the app, we have a manifest.yml file so the command 
 is very simple.
     
-    $ git clone https://github.com/CodenameBlueMix/bluechatter.git	
+    $ git clone https://github.com/IBM-Bluemix/bluechatter.git	
 	$ cd bluechatter
     $ cf push my-bluemix-chatter-app-name
-
-### Using IBM DevOps Services (JazzHub)
-If you would like you can also deploy the project to BlueMix using
-IBM's DevOps Services (JazzHub).  You can find the project 
-[here](https://hub.jazz.net/project/rjbaxter/bluechatter/overview) on
-JazzHub.  To deploy you will need to login to JazzHub. Then click
-Edit Code in the upper right hand corner.  In the editor click the 
-Deploy button in the toolbar.
 
 
 ## Scaling The App
