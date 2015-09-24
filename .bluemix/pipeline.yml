@@ -88,7 +88,7 @@ stages:
   - type: stage
   properties:
   - name: ROUTE_HOSTNAME
-    value: ${CF_APP}-container
+    value: ${CF_APP}
     type: text
   - name: ROUTE_DOMAIN
     value: mybluemix.net
