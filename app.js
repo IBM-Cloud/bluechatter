@@ -18,73 +18,79 @@ var express = require("express");
 var fs = require('fs');
 var http = require('http');
 var path = require('path');
-var cfenv = require("cfenv");
-var pkg   = require("./package.json");
-var redis = require('redis');
+var MessageHub = require('message-hub-rest');
+var cfenv = require('cfenv');
 var nconf = require('nconf');
-var appEnv = cfenv.getAppEnv();
-nconf.env();
-var isDocker = nconf.get('DOCKER') == 'true' ? true : false;
+
+var MESSAGE_HUB_TOPIC = 'kafkachatter';
+var CONSUMER_GROUP_NAME = 'kafkachatter-consumers';
+var CONSUMER_GROUP_INSTANCE_NAME = 'kafkachatter-consumer-1';
 var clients = [];
 
+// Initialize our appEnv object. When running locally, you can define a
+// VCAP_SERVICES.json file that mirrors the VCAP_SERVICES in bluemix, if you
+// do so, we will use those environment variables.
+var cfenvOpts = null;
+try {
+  cfenvOpts = { vcap: { services: require('./VCAP_SERVICES.json') } };
+} catch(e) {}; // don't do anything, just means JSON file doesnt exist
+var appEnv = cfenv.getAppEnv(cfenvOpts);
+
+// See if we're running in docker or not
+nconf.env();
+var isDocker = nconf.get('DOCKER') == 'true' ? true : false;
+
+// Initialize our express server
 var app = express();
 app.set('port', appEnv.port || 3000);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-var redisService = appEnv.getService('redis-chatter');
-var credentials;
-if(!redisService || redisService == null) {
-  if(isDocker) {
-    credentials = {"hostname":"redis", "port":6379};
-  } else {
-    credentials = {"hostname":"127.0.0.1", "port":6379};
-  }
-} else {
-  if(isDocker) {
-    //This works around a problem with networking when deployed to Bluemix in a docker
-    //container
-    //For some reason it takes about 30 seconds for the networking to come up on the container
-    //so we sleep here before we continue on and use these credentials to connect
-    console.log('The app is running in a Docker container on Bluemix so we are ' +
-      'sleeping for 90 seconds waiting for the networking to become active.');
-    require('sleep').sleep(90);
-  }
-  credentials = redisService.credentials;
-}
+// extract our kafka credentials - right now only works with a deployed kafka
+// via the Bluemix message hub service
+var kafkaService = appEnv.getService('kafka-chatter');
+var messageHubInstance = new MessageHub({messagehub: [ kafkaService ]});
 
-// We need 2 Redis clients one to listen for events, one to publish events
-var subscriber = redis.createClient(credentials.port, credentials.hostname);
-subscriber.on('error', function(err) {
-  console.error('There was an error with the subscriber redis client ' + err);
+// initialize kafka
+// first, we make sure our topic exists
+var consumerInstance;
+messageHubInstance.topics.get().then(function(topics) {
+  if (topics.some(function(t) { return t.name === MESSAGE_HUB_TOPIC; })) {
+    return true
+  }
+  return messageHubInstance.topics.create(MESSAGE_HUB_TOPIC);
+// once our topic is initialized, we create a consumer
+}).then(function() {
+  console.log('topic ' + MESSAGE_HUB_TOPIC + ' initialized');
+  return messageHubInstance.consume(CONSUMER_GROUP_NAME, CONSUMER_GROUP_INSTANCE_NAME, { 'auto.offset.reset': 'largest' });
+// once our consumer is created, we keep a reference to it
+}).then(function(response) {
+  console.log('successfully created consumer ' + CONSUMER_GROUP_NAME + ':' + CONSUMER_GROUP_INSTANCE_NAME);
+  consumerInstance = response[0];
+}).catch(function(error) {
+  console.error('error creating topic');
+  console.error(error);
 });
-subscriber.on('connect', function() {
-  console.log('The subscriber redis client has connected!');
 
-  subscriber.on('message', function(channel, msg) {
-    if(channel === 'chatter') {
-      while(clients.length > 0) {
-        var client = clients.pop();
-        client.end(msg);
-      }
+// produce and consume a message over our message hub
+function produceConsume(message) {
+  var list = new MessageHub.MessageList([message]);
+  return messageHubInstance.produce(MESSAGE_HUB_TOPIC, list.messages).then(function(response) {
+    console.log('published message: ' + JSON.stringify(message));
+    return consumerInstance.get(MESSAGE_HUB_TOPIC);
+  }).then(function(data) {
+    var receivedMessage = data[0];
+    console.log('received message: ' + receivedMessage);
+    while(clients.length > 0) {
+      var client = clients.pop();
+      client.end(data[0]);
     }
+    return true;
+  }).catch(function(error) {
+    console.error('error sending or receiving message');
+    console.error(error);
   });
-  subscriber.subscribe('chatter');
-});
-var publisher = redis.createClient(credentials.port, credentials.hostname);
-publisher.on('error', function(err) {
-  console.error('There was an error with the publisher redis client ' + err);
-});
-publisher.on('connect', function() {
-  console.log('The publisher redis client has connected!');
-});
-
-if (credentials.password != '' && credentials.password != undefined) {
-    subscriber.auth(credentials.password);
-    publisher.auth(credentials.password);
-  }
-
-
+}
 
 // Serve up our static resources
 app.get('/', function(req, res) {
@@ -100,17 +106,11 @@ app.get('/poll/*', function(req, res) {
 
 // Msg endpoint
 app.post('/msg', function(req, res) {
-  message = req.body;
-  publisher.publish("chatter", JSON.stringify(message), function(err) {
-    if(!err) {
-      console.log('published message: ' + JSON.stringify(message));
-    } else {
-      console.error('error publishing message: ' + err);
-    }
-  });
+  produceConsume(req.body);
   res.end();
 });
 
+// instanceId endpoint
 var instanceId = !appEnv.isLocal ? appEnv.app.instance_id : undefined;
 app.get('/instanceId', function(req, res) {
   if(!instanceId) {
@@ -132,6 +132,7 @@ setInterval(function() {
   }
 }, 60000);
 
-http.createServer(app).listen(app.get('port'), function(){
+// start up our server
+http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });

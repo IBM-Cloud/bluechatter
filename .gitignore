@@ -14,3 +14,5 @@
 # limitations under the License.
 #
 /node_modules
+npm-debug.log
+VCAP_SERVICES.json
