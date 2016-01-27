@@ -63,7 +63,7 @@ are logged in.
 
 Next you need to create a Redis service for the app to use.  Lets use the RedisCloud service.
 
-    $ cf create-service rediscloud 25mb redis-chatter
+    $ cf create-service rediscloud 30mb redis-chatter
 
 ### Using The Cloud Foundry CLI
 
