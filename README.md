@@ -3,19 +3,19 @@ The BlueChatter app is a very simple chat/IRC type app for your browser.
 It is very basic, you just go to the app, enter a user name and start
 chatting.
 
-For a demonstration of this application you can watch the following 
+For a demonstration of this application you can watch the following
 YouTube video.
 
 [![BlueChatter](https://img.youtube.com/vi/i7_dQQy40ZQ/0.jpg?time=1398101975441)](http://youtu.be/i7_dQQy40ZQ)
 
 
 ## Technologies
-BlueChatter uses [Node.js](http://nodejs.org/) and 
-[Express](http://expressjs.com/) for the server.  On the frontend 
-BlueChatter uses [Bootstrap](http://getbootstrap.com/) and 
-[JQuery](http://jquery.com/).  The interesting part of this application 
-is how the communication of messages is done.  The application uses [long 
-polling](http://en.wikipedia.org/wiki/Push_technology#Long_polling) to enable 
+BlueChatter uses [Node.js](http://nodejs.org/) and
+[Express](http://expressjs.com/) for the server.  On the frontend
+BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
+[JQuery](http://jquery.com/).  The interesting part of this application
+is how the communication of messages is done.  The application uses [long
+polling](http://en.wikipedia.org/wiki/Push_technology#Long_polling) to enable
 the clients (browsers) to listen for new messages.  Once the
 app loads a client issues a request to the server.  The server waits to respond
 to the request until it receives a message.  If no message is received from any
@@ -27,15 +27,14 @@ the process continues.
 One of the goals of this application is to demonstrate scaling in Bluemix.
 As we know when you scale an application in Bluemix you essentially are
 creating multiple instance of the same application which users will connect
-to at random.  In other words there are multiple BlueChatter servers running 
+to at random.  In other words there are multiple BlueChatter servers running
 at the same time.  So how do we communicate chat messages between the servers?
-We use the [pubsub feature of Redis](http://redis.io/topics/pubsub) to solve 
-this.  All servers bind to a single
-Redis instance and each server is listening for messages on the same channel.
-When one chat server receives a chat message it publishes an event to Redis
-containing the message.  The other servers then get notifications of the new
-messages and notify their clients of the.  This design allows BlueChatter to
-scale nicely to meet the demand of its users.
+We use the [IBM Message Hub Service](https://developer.ibm.com/messaging/message-hub/)
+to solve this.  All servers bind to a single provisioned instance and each
+server is listening for messages on the same topic. When one chat server
+receives a chat message it produces the message.  The other servers then get
+notifications of the new messages and notify their clients of it.  This design
+allows BlueChatter to scale nicely to meet the demand of its users.
 
 ## Deploying To Bluemix
 
@@ -51,9 +50,8 @@ application to Bluemix for you.  The deployment pipeline will both deploy the ap
 Cloud Foundry application and in a Docker container.  Both versions of the application will
 share the same route (URL) in Bluemix so hitting that URL you will either be using the Cloud
 Foundry application or the Docker container.  In addition to deploying the app using Cloud
-Foundry and Docker the pipeline will build a Docker image and place it in your Docker 
+Foundry and Docker the pipeline will build a Docker image and place it in your Docker
 registry on Bluemix so you can deploy additional containers based on that image if you want.
-
 
 ### Using The Command Line
 Make sure you have the Cloud Foundry Command Line installed and you
@@ -61,23 +59,22 @@ are logged in.
 
     $ cf login -a https://api.ng.bluemix.net
 
-Next you need to create a Redis service for the app to use.  Lets use the RedisCloud service.
+Next you need to create a Message Hub service for the app to use:
 
-    $ cf create-service rediscloud 25mb redis-chatter
+    $ cf create-service messagehub standard kafka-chatter
 
 ### Using The Cloud Foundry CLI
 
-Now just push the app, we have a manifest.yml file so the command 
+Now just push the app, we have a manifest.yml file so the command
 is very simple.
-    
-    $ git clone https://github.com/IBM-Bluemix/bluechatter.git	
-	$ cd bluechatter
-    $ cf push my-bluemix-chatter-app-name
 
+    $ git clone https://github.com/IBM-Bluemix/bluechatter.git
+    $ cd bluechatter
+    $ cf push my-bluemix-chatter-app-name
 
 ## Scaling The App
 
-Since we are using Redis to send chat messages, you can scale this application
+Since we are using Message Hub to send chat messages, you can scale this application
 as much as you would like and people can be connecting to various servers
 and still receive chat messages.  To scale you app you can run the following
 command.
@@ -95,7 +92,7 @@ browsers.
 
 ### Docker
 
-Bluechatter can be run inside a Docker container locally or in the 
+Bluechatter can be run inside a Docker container locally or in the
 IBM Containers Service in Bluemix.
 
 #### Running In A Docker Container Locally
@@ -127,11 +124,11 @@ On Linux you can just go to [http://localhost](http://localhost).
 #### Running The Container On Bluemix
 
 Before running the container on Bluemix you need to have gone through the steps to setup
-the IBM Container service on Bluemix.  Please review the 
+the IBM Container service on Bluemix.  Please review the
 [documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before
 continuing.
 
-The following instruction assume you are using the [Cloud Foundry 
+The following instruction assume you are using the [Cloud Foundry
 CLI IBM Containers Plugin](https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html#container_cli_cfic_install).
 If you are not using the plugin, execute the equivalent commands for your CLI solution.
 
@@ -152,29 +149,32 @@ $ cf ic build -t namespace/bluechatter ./
 ```
 
 The above `build` command will push the code for Bluechatter to the IBM Containers Docker service
-and run a `docker build` on that code.  Once the build finishes the resulting image will be 
-deployed to your Docker registry on Bluemix.  You can verify this by running 
+and run a `docker build` on that code.  Once the build finishes the resulting image will be
+deployed to your Docker registry on Bluemix.  You can verify this by running
 
 ```
 $ cf ic images
 ```
 
-You should see a new image with the tag `namespace/bluechatter` listed in the images available to you.
-You can also verify this by going to the [catalog](https://console.ng.bluemix.net/catalog/) on Bluemix,
-in the containers section you should see the Bluechatter image listed.
+You should see a new image with the tag `namespace/bluechatter` listed in the
+images available to you. You can also verify this by going to the
+[catalog](https://console.ng.bluemix.net/catalog/) on Bluemix, in the containers
+section you should see the Bluechatter image listed.
 
-Before you can start a container from the image we are going to need a Redis service for our container to use.
-To do this in Bluemix we will need what is called a "bridge app".  Follow the [
-instructions](https://www.ng.bluemix.net/docs/containers/container_binding_ov.html#container_binding_ui) on
-Bluemix for how to create a bridge app from the UI.  Make sure you bind a 
-[Redis Cloud](https://console.ng.bluemix.net/catalog/redis-cloud/) service to the bridge
-app and name it "redis-chatter".
+Before you can start a container from the image we are going to need a Message
+Hub service for our container to use. To do this in Bluemix we will need what is
+called a "bridge app".  Follow the
+[instructions](https://www.ng.bluemix.net/docs/containers/container_binding_ov.html#container_binding_ui)
+on Bluemix for how to create a bridge app from the UI.  Make sure you bind a
+[IBM Message Hub Service](https://developer.ibm.com/messaging/message-hub/) service to
+the bridge app and name it "kafka-chatter".
 
-Once your bridge app is created follow the 
-[instructions](https://www.ng.bluemix.net/docs/containers/container_single_ov.html#container_single_ui) 
-on Bluemix for deploying a container based on the Bluechatter image.  Make sure you request a public IP
-address, expose port 80, and bind to the bridge app you created earlier.  Once your container starts you
-go to the public IP address assigned to the app in your browser and you should see the Bluechatter UI.
+Once your bridge app is created follow the
+[instructions](https://www.ng.bluemix.net/docs/containers/container_single_ov.html#container_single_ui)
+on Bluemix for deploying a container based on the Bluechatter image.  Make sure
+you request a public IP address, expose port 80, and bind to the bridge app you
+created earlier.  Once your container starts you go to the public IP address
+assigned to the app in your browser and you should see the Bluechatter UI.
 
 ## Testing
 
