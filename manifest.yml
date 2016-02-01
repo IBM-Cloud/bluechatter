@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 declared-services:
-  redis-chatter:
-    label: rediscloud
-    plan:  30mb
+  kafka-chatter:
+    label: messagehub
+    plan:  standard
 applications:
 - name: bluechatter
   memory: 128M
   command: node app.js
   services:
-  - redis-chatter
+  - kafka-chatter
