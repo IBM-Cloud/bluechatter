@@ -25,6 +25,7 @@ var nconf = require('nconf');
 var MESSAGE_HUB_TOPIC = 'kafkachatter';
 var CONSUMER_GROUP_NAME = 'kafkachatter-consumers';
 var CONSUMER_GROUP_INSTANCE_NAME = 'kafkachatter-consumer-1';
+var KAFKA_POLLING_INTERVAL = 500;
 var clients = [];
 
 // Initialize our appEnv object. When running locally, you can define a
@@ -54,7 +55,7 @@ var messageHubInstance = new MessageHub({messagehub: [ kafkaService ]});
 // initialize kafka
 // first, we make sure our topic exists
 var consumerInstance;
-messageHubInstance.topics.get().then(function(topics) {
+var kafkaInitialized = messageHubInstance.topics.get().then(function(topics) {
   if (topics.some(function(t) { return t.name === MESSAGE_HUB_TOPIC; })) {
     return true
   }
@@ -72,25 +73,25 @@ messageHubInstance.topics.get().then(function(topics) {
   console.error(error);
 });
 
-// produce and consume a message over our message hub
-function produceConsume(message) {
-  var list = new MessageHub.MessageList([message]);
-  return messageHubInstance.produce(MESSAGE_HUB_TOPIC, list.messages).then(function(response) {
-    console.log('published message: ' + JSON.stringify(message));
+// using the REST api - we have to poll, there are no events unless you
+// communicate with kafka directly
+setInterval(function() {
+  kafkaInitialized.then(function () {
     return consumerInstance.get(MESSAGE_HUB_TOPIC);
   }).then(function(data) {
     var receivedMessage = data[0];
-    console.log('received message: ' + receivedMessage);
-    while(clients.length > 0) {
-      var client = clients.pop();
-      client.end(data[0]);
+    if (receivedMessage && receivedMessage.length) {
+      console.log('received message: ' + receivedMessage);
+      while(clients.length > 0) {
+        var client = clients.pop();
+        client.end(data[0]);
+      }
     }
-    return true;
   }).catch(function(error) {
-    console.error('error sending or receiving message');
+    console.error('error receiving message');
     console.error(error);
   });
-}
+}, KAFKA_POLLING_INTERVAL);
 
 // Serve up our static resources
 app.get('/', function(req, res) {
@@ -106,7 +107,13 @@ app.get('/poll/*', function(req, res) {
 
 // Msg endpoint
 app.post('/msg', function(req, res) {
-  produceConsume(req.body);
+  var list = new MessageHub.MessageList([req.body]);
+  messageHubInstance.produce(MESSAGE_HUB_TOPIC, list.messages).then(function(response) {
+    console.log('published message: ' + JSON.stringify(req.body));
+  }).catch(function(error) {
+    console.error('error sending or receiving message');
+    console.error(error);
+  });
   res.end();
 });
 
