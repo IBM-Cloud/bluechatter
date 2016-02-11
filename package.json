@@ -11,8 +11,7 @@
     "express": "3.4.8",
     "http-post": "^0.1.1",
     "nconf": "^0.7.2",
-    "redis": "*",
-    "sleep": "^3.0.0"
+    "redis": "*"
   },
   "repository": {
     "type": "git",
