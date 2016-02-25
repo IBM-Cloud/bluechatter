@@ -42,13 +42,7 @@ if(!redisService || redisService == null) {
   }
 } else {
   if(isDocker) {
-    //This works around a problem with networking when deployed to Bluemix in a docker
-    //container
-    //For some reason it takes about 30 seconds for the networking to come up on the container
-    //so we sleep here before we continue on and use these credentials to connect
-    console.log('The app is running in a Docker container on Bluemix so we are ' +
-      'sleeping for 90 seconds waiting for the networking to become active.');
-    require('sleep').sleep(90);
+    console.log('The app is running in a Docker container on Bluemix.')
   }
   credentials = redisService.credentials;
 }
@@ -56,6 +50,10 @@ if(!redisService || redisService == null) {
 // We need 2 Redis clients one to listen for events, one to publish events
 var subscriber = redis.createClient(credentials.port, credentials.hostname);
 subscriber.on('error', function(err) {
+  if (isDocker && err.message.match('getaddrinfo EAI_AGAIN')) {
+    console.log('Waiting for IBM Containers networking to be available...')
+    return
+  }
   console.error('There was an error with the subscriber redis client ' + err);
 });
 subscriber.on('connect', function() {
@@ -73,6 +71,10 @@ subscriber.on('connect', function() {
 });
 var publisher = redis.createClient(credentials.port, credentials.hostname);
 publisher.on('error', function(err) {
+  if (isDocker && err.message.match('getaddrinfo EAI_AGAIN')) {
+    console.log('Waiting for IBM Containers networking to be available...')
+    return
+  }
   console.error('There was an error with the publisher redis client ' + err);
 });
 publisher.on('connect', function() {
