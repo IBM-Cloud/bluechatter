@@ -222,7 +222,7 @@ do that now, run
 ```
 $ cf ic build -t my_namespace/bluechatter ./
 ```
-Finally you can run `docker-compose -f docker-compose-bluemix.yml up -d` to
+Finally you can run `docker-compose -f docker-compose-bluemix.yml up -d --force-recreate` to
 create, start, and run both containers.
 
 Now that the containers are running you need to bind a public IP address to the
