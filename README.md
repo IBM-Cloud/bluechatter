@@ -1,7 +1,7 @@
 ## About
 The BlueChatter app is a simple chat/IRC type application for your browser where it will allow multiple users to chat when online at the same time.
 The main focus here is to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
-The demo will demonstrate how easily you can deploy and scale your docker container on Bluemix, you will learn the tools and offerings when deploying your docker application.
+The demo will demonstrate how easily you can deploy and scale your docker container on Bluemix, you will also learn the tools and services you need for when deploying your docker application to Bluemix.
 
 See how the browser chat application will looks like:
 ![Application Diagram](ReadMeImages/viewapp.png)
