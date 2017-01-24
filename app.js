@@ -22,6 +22,7 @@ var cfenv = require("cfenv");
 var pkg   = require("./package.json");
 var redis = require('redis');
 var nconf = require('nconf');
+
 var appEnv = cfenv.getAppEnv();
 nconf.env();
 var isDocker = nconf.get('DOCKER') == 'true' ? true : false;

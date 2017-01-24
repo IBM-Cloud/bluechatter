@@ -1,5 +1,5 @@
 {
-  "name": "BlueChatter",
+  "name": "bluechatter",
   "version": "0.0.1",
   "scripts": {
     "install": "node admin.js track",

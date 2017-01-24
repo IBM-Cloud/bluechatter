@@ -1,15 +1,19 @@
 ## About
-The BlueChatter app is a very simple chat/IRC type app for your browser.
-It is very basic, you just go to the app, enter a user name and start
-chatting.
+The BlueChatter app is a simple chat/IRC type application for your browser where it will allow multiple users to chat when online at the same time.
+The main focus here is to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
+The demo will demonstrate how easily you can deploy and scale your docker container on Bluemix, you will learn the tools and offerings when deploying your docker application.
 
-For a demonstration of this application you can watch the following
-YouTube video.
+See how the browser chat application will looks like:
+![Application Diagram](ReadMeImages/viewapp.png)
 
-[![BlueChatter](https://img.youtube.com/vi/i7_dQQy40ZQ/0.jpg?time=1398101975441)](http://youtu.be/i7_dQQy40ZQ)
+## Target Users:
+- Learn how to deploy, scale and manage a **docker** application to Bluemix.  
+- Learn how to deploy, scale and manage a **Cloud Foundry** application to Bluemix.  
+- Learn how to create a simple Chat application with using NodeJs and Express.  
+- Learn more on the tooling and reporting when working with Docker Containers.  
 
 
-## Technologies
+## Technologies Used
 BlueChatter uses [Node.js](http://nodejs.org/) and
 [Express](http://expressjs.com/) for the server.  On the frontend
 BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
@@ -17,35 +21,28 @@ BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
 is how the communication of messages is done.  The application uses [long
 polling](http://en.wikipedia.org/wiki/Push_technology#Long_polling) to enable
 the clients (browsers) to listen for new messages.  Once the
-app loads a client issues a request to the server.  The server waits to respond
+app loads successfully a client then issues a request to the server.  The server waits to respond
 to the request until it receives a message.  If no message is received from any
 of the chat participants it responds back to the client with a 204 - no content.
 As soon as the client gets a response from the server, regardless of whether that
 response contains a message or not, the client will issue another request and
 the process continues.
 
-One of the goals of this application is to demonstrate scaling in Bluemix.
-As we know when you scale an application in Bluemix you essentially are
-creating multiple instance of the same application which users will connect
-to at random.  In other words there are multiple BlueChatter servers running
-at the same time.  So how do we communicate chat messages between the servers?
-We use the [pubsub feature of Redis](http://redis.io/topics/pubsub) to solve
-this.  All servers bind to a single
-Redis instance and each server is listening for messages on the same channel.
-When one chat server receives a chat message it publishes an event to Redis
-containing the message.  The other servers then get notifications of the new
-messages and notify their clients of the.  This design allows BlueChatter to
-scale nicely to meet the demand of its users.
 
-## Deploying To Bluemix
+The main goal of this application is to demonstrate the deployment and Scaling of Docker container and Cloud Foundry application on Bluemix. We will look at why and when you should deploy your application to a docker container over the classic Cloud Foundry root. You will learn on how to scale your application, scaling is big factor to any production applications, no matter which root you would take you would still need to scale your application for when traffic spike occur. With using the [IBM Bluemix auto scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) service, we can automatically scale our Cloud Foundry Application or Docker Container application. To forwarder explain what scaling means, all scaling is to have multiple instance of the same application running at the same time, this means all users seen the same application while each user is directed to different instance of the application depending on the number of the instances you scale to.
 
-The easiest way to deploy BlueChatter is to click the "Deploy to Bluemix"
-button below.
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)
+Another area we should outline is how do the chat messages happen between the different servers, how do all instance of the applications talk to the same database to offer the chat experience to the users like if they are all on one instance?
+For that we use the [pubsub feature of Redis](http://redis.io/topics/pubsub) to solve this. All the servers will be bound to a single Redis instance and each server is listening for messages on the same channel.
+When one chat server receives a chat message it publishes an event to Redis containing the message. The other servers then get notifications of the new messages and notify their clients of the.  This design allows BlueChatter to scale nicely to meet the demand of its users.
 
-Using the Deploy To Blumix button will automatically setup several things for you.  
-First it will create a Git repo in IBM DevOps Services containing the code for the applicaiton.
+## Automatically Deploying To Bluemix
+
+The easiest way to deploy BlueChatter is by clicking on the "Deploy to Bluemix" button in which automatically deploys the application to Bluemix.  
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)  
+
+Using the Deploy To Bluemix button will automatically setup several things for you.  
+First it will create a Git repo in IBM DevOps Services containing the code for the application.
 In addition a deployment pipeline will automatically be setup and run which will deploy the
 application to Bluemix for you.  The deployment pipeline will both deploy the application as a
 Cloud Foundry application and in a Docker container.  Both versions of the application will
@@ -55,199 +52,237 @@ Foundry and Docker the pipeline will build a Docker image and place it in your D
 registry on Bluemix so you can deploy additional containers based on that image if you want.
 
 
-### Using The Command Line
-Make sure you have the Cloud Foundry Command Line installed and you
-are logged in.
 
-    $ cf login -a https://api.ng.bluemix.net
+## 1.0 Cloud Foundry Deployment Approach
 
-Next you need to create a Redis service for the app to use.  Lets use the RedisCloud service.
+1. Create a Bluemix Account  
+[Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
 
-    $ cf create-service rediscloud 30mb redis-chatter
+1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
 
-### Using The Cloud Foundry CLI
+1. If you have not already, [download node.js 6.7.0 or later][https://nodejs.org/download/] and install it on your local machine.
 
-Now just push the app, we have a manifest.yml file so the command
-is very simple.
+1. Clone the app to your local environment from your terminal using the following command
+  ```
+  git clone https://github.com/IBM-Bluemix/bluechatter.git
+  ```
 
-    $ git clone https://github.com/IBM-Bluemix/bluechatter.git
-	$ cd bluechatter
-    $ cf push my-bluemix-chatter-app-name
+1. `cd` into the `bluechatter` folder that you cloned
+  ```
+  cd bluechatter
+  ```
+
+1. Edit the `manifest.yml` file and change the application `host` to something unique. The host you use will determinate your application url initially, e.g. `<host>.mybluemix.net`.
+
+1. Connect and login to Bluemix
+  ```
+  $ cf login -a https://api.ng.bluemix.net
+  ```
+
+1. Create a Redis service for the app to use, we will use the RedisCloud service.
+  ```
+  $ cf create-service rediscloud 30mb redis-chatter
+  ```
+
+1. Push the application
+  ```
+  cf push
+  ```
+
+**Done**, now go to the staging domain(`<host>.mybluemix.net`.) and see your app running.
 
 
-## Scaling The App
+### 1.1 Scaling Your Cloud Foundry Application
 
-Since we are using Redis to send chat messages, you can scale this application
-as much as you would like and people can be connecting to various servers
-and still receive chat messages.  To scale you app you can run the following
-command.
+Since we are using Redis to send chat messages, you can scale this application as much as you would like and people can be connecting to various servers and still receive chat messages.  We will be looking on how to scale the application runtime instances for when needed, to do this we are going to look at the manual scaling command or use the Auto-Scaling service to automatically increase or decrease the number of application instances based on a policy we set it.
 
-    $ cf scale my-blue-chatter-app-name -i 5
+#### Manual Scaling
+1. Manually scale the application to run 3 instances
+  ```
+  $ cf scale my-blue-chatter-app-name -i 3
+  ```
 
-Then check your that all your instances are up and running.
+1. Then check your that all your instances are up and running.
+  ```
+   $ cf app my-blue-chatter-app-name
+  ```
+Now switch over to your staging domain(`<host>.mybluemix.net`.) to see your running application.
+Note, you can see see which instance you are connecting to in the footer of the application.  
+If you have more than one instance running chances are the instance id will be different between two different browsers.  
 
-    $ cf app my-blue-chatter-app-name
 
-When you connect to app you can see which instance you are connecting to
-in the footer of the application.  If you have more than one instance
-running chances are the instance id will be different between two different
-browsers.
+#### Auto Scaling
+- It's good to be able to manually scale your application but Manual scaling wont work for many cases, for that reason we need to setup a [Auto-Scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) to automatically scale our application for when needed.
+To learn more on Auto-Scaling checkout the blog post [Handle the Unexpected with Bluemix Auto-Scaling](https://www.ibm.com/blogs/bluemix/2015/04/handle-unexpected-bluemix-auto-scaling/) for detailed descreption on [Auto-Scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html).
 
-### Docker
 
-BlueChatter can be run inside a Docker container locally or in the
-IBM Containers Service in Bluemix.
+## 2.0 Docker Deployment Approach
+Here we are going to look on how to deploy the BlueChatter application on a Docker container where it will be running on IBM Bluemix.
+We will then look on how to scale your docker container on Bluemix to scale your application where needed. First, lets look at running the BlueChatter application inside a Docker container locally on your machine, next we will deploy the container to Bluemix and then scale it for when needed. Lets get started and have fun.
 
-#### Running In A Docker Container Locally
+### 2.1 Setup
+1. Create a Bluemix Account  
+[Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
 
-To run locally you must have Docker and Docker Compose installed locally.
-If you are using OSX or Windows, both should be installed by default
-when you install [Docker Toolbox](https://www.docker.com/toolbox).  For
-Linux users follow the [instructions](https://docs.docker.com/compose/install/)
-on the Docker site.
+1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
 
-Once you have Docker and Docker Compose installed run the following commands
-from the application root to start the BlueChatter application.
+1. **Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the "docker" command in your terminal window, if you see the list of docker commands then you are good to go.**
 
-```
-$ docker-compose build
-$ docker-compose up
-```
-On OSX and Windows you will need the IP address of your Docker Machine VM to test the application.
+1. If you have not already, [download node.js 6.7.0 or later][https://nodejs.org/download/] and install it on your local machine.
+
+1. Clone the app to your local environment from your terminal using the following command
+
+  ```
+  git clone https://github.com/IBM-Bluemix/bluechatter.git
+  ```
+
+1. `cd` into the `bluechatter` folder that you cloned
+
+  ```
+  cd bluechatter
+  ```
+
+
+### 2.2 Build & run container locally
+
+1. Build your docker container
+  ```
+  $ docker-compose build
+  ```
+
+2. Start your docker container
+  ```
+  $ docker-compose up
+  ```
+
+**Done,** now go to [http://localhost](http://localhost) to see your app running if you are on a Mac Linux.   
+
+- On Windows you will need the IP address of your Docker Machine VM to test the application.
 Run the following command, replacing `machine-name` with the name of your Docker Machine.
-
 ```
 $ docker-machine ip machine-name
 ```
 Now that you have the IP go to your favorite browser and enter the IP in the address bar,
 you should see the app come up.  (The app is running on port 80 in the container.)
 
-On Linux you can just go to [http://localhost](http://localhost).
 
-#### Running The Container On Bluemix
+### 2.3 Run container on Bluemix
+Before running the container on Bluemix, I recommend you to checkout the Docker container Bluemix documentation to better understand the steps below. Please review the [documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before continuing.
 
-Before running the container on Bluemix you need to have gone through the steps to setup
-the IBM Container service on Bluemix.  Please review the
-[documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before
-continuing.
+1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool if haven't already.
 
-The following instruction assume you are using the [Cloud Foundry
-CLI IBM Containers Plugin](https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html#container_cli_cfic_install).
-If you are not using the plugin, execute the equivalent commands for your CLI solution.
+1. Install the IBM Bluemix Container Service plug-in to execute commands to IBM Bluemix containers from your terminal window. Install Container Service plug-in by running this command if on OS X.
+  ```
+  $ cf install-plugin https://static-ice.ng.bluemix.net/ibm-containers-mac
+  ```
+If you are on Linux or windows then find the [installation command here](https://console.ng.bluemix.net/docs/containers/container_cli_cfic_install.html)
 
-Make sure you are logged into Bluemix from the Cloud Foundry CLI and the IBM Containers plugin.
+1. Login to Bluemix with your Bluemix email and password
+  ```
+  $ cf login -a api.ng.bluemix.net
+  ```
 
-```
-$ cf login -a api.ng.bluemix.net
-$ cf ic login
-```
+1. Login to the IBM Containers plugin to work with your docker images that are on Bluemix
+  ```
+  $ cf ic login
+  ```
 
-After you have logged in you can build an image for the BlueChatter application on Bluemix.
+1. After you have logged in you can build an image for the BlueChatter application on Bluemix.
 From the root of BlueChatter application run the following commnand replacing namespace
 with your namespace for the IBM Containers service.  (If you don't know what your namespace is
 run `$ cf ic namespace get`.)
+  ```
+  $ cf ic build -t namespace/bluechatter ./
+  ```
 
-```
-$ cf ic build -t namespace/bluechatter ./
-```
-
-The above `build` command will push the code for Bluechatter to the IBM Containers Docker service
-and run a `docker build` on that code.  Once the build finishes the resulting image will be
-deployed to your Docker registry on Bluemix.  You can verify this by running
-
-```
-$ cf ic images
-```
-
+  The above `build` command will push the code for Bluechatter to the IBM Containers Docker service
+  and run a `docker build` on that code.  Once the build finishes the resulting image will be
+  deployed to your Docker registry on Bluemix.  You can verify this by running
+  ```
+  $ cf ic images
+  ```
 You should see a new image with the tag `namespace/bluechatter` listed in the images available to you.
 You can also verify this by going to the [catalog](https://console.ng.bluemix.net/catalog/) on Bluemix,
 in the containers section you should see the BlueChatter image listed.
 
-Before you can start a container from the image we are going to need a Redis service for our container to use.
-To do this in Bluemix we will need what is called a "bridge app".  Follow the [
-instructions](https://www.ng.bluemix.net/docs/containers/container_binding_ov.html#container_binding_ui) on
-Bluemix for how to create a bridge app from the UI.  Make sure you bind a
-[Redis Cloud](https://console.ng.bluemix.net/catalog/redis-cloud/) service to the bridge
-app and name it "redis-chatter".
+1. Our BlueChatter application is using the Redis cloud service to store in memory the chat communication, lets go ahead and great the Redis service.
+We can create a service on Bluemix using the Bluemix UI or the terminal using the command below.
+Enter this command in your terminal to create the Redis service:
+  ```
+  $ create-service rediscloud 30mb redis-chatter
+  ```
 
-Once your bridge app is created follow the
-[instructions](https://www.ng.bluemix.net/docs/containers/container_single_ov.html#container_single_ui)
-on Bluemix for deploying a container based on the BlueChatter image.  Make sure you request a public IP
-address, expose port 80, and bind to the bridge app you created earlier.  Once your container starts you
-go to the public IP address assigned to the app in your browser and you should see the BlueChatter UI.
 
-#### Deploy To Bluemix With Docker Compose
-In addition to using a cloud hosted Redis service like RedisCloud on Bluemix,
-you can choose to have BlueChatter use your own container running Redis.  The easiest way to do this is to use Docker Compose.  Below are a few simple steps to easily deploy BlueChatter and Redis using Docker Compose.
+#### Steps to be done on Bluemix UI
+Now we need to switch over to Bluemix UI and complete the steps required to have our docker image running inside a private docker container repository on Bluemix.
 
-First you will have to pull the [Redis image](https://hub.docker.com/_/redis/) from Docker
-Hub into your private registry on Bluemix.  To do this run
+**Step 1)** Go over [Bluemix catalog container](https://console.ng.bluemix.net/catalog/?taxonomyNavigation=apps&category=containerImages) area and click on the "bluechatter" registry that we created. ![Application Diagram](ReadMeImages/registry.png)
 
-```
-$ cf ic cpi redis registry.ng.bluemix.net/<my_namespace>/redis
-```
-Make sure you replace `my_namespace` in the URL above with your IBM Containers
-namespace from Bluemix.
+**Step 2)** You have the option to create single or scalable container, in our case we will select the scalable container option to take the full advantage of the scaling capabilities.   
+Here are the items you need to select to create the container:  
+- Select the scalable option for container type  
+- Give your container a name, I named my container bluechatterContainerGroup  
+- Select a container size, I selected Nano 128MB 8GB Storage for this example but you can select the size in which best for your setup.
+- Select number of instances, I selected 3 instances  
+- Host leave it as default  
+- HTTP Port should be 80 and enable automatic recovery option if you wish.  
+- Last and most important step, bind the Redis service to the container, to do this, click on the **"Advanced Options"** button then scroll down to select and **add** the Redis service.  
+- Click on the Create button.
+![Application Diagram](ReadMeImages/configuration.png)
 
-In order to use the Docker Compose CLI commands with IBM Containers in Bluemix
-you need to configure your Docker CLI to point to the IBM Containers service
-on Bluemix.  To do this run `cf ic login` and follow the steps in "Option 2" to
-use the Docker CLI.
 
-Next create a new Docker Compose file called `docker-compose-bluemix.yml` and
-add the following YAML.
+**Done,** with above steps completed, you should have your container running within 2-3 mins.  
+Looking at my container screenshot below, we can quickly see everything we need to know about our docker container.  
+Note, a staging domain also been created for us with the name of the container group.  
+![Application Diagram](ReadMeImages/containers.png)
 
-```
-web:
-  image: registry.ng.bluemix.net/<my_namespace>/bluechatter
-  ports:
-    - "80"
-  links:
-    - redis
-  mem_limit: 512
-  environment:
-    - "LOG_LOCATIONS=/var/log/dpkg.log"
-redis:
-  image: registry.ng.bluemix.net/<my_namespace>/redis
-  ports:
-    - "6379"
-  mem_limit: 128
-```
 
-Again make sure you replace `my_namespace` with your IBM Containers namespace.
+### 2.4 Container Scaling
+The Bluemix containers offers a great scaling and reporting functionality where as a developer you really don't need to worry about any of the underlying infrastructure and scaling scripts.
+Let's look at how to setup a scaling policies and increasing container instances.
 
-If you have not yet pushed the BlueChatter Docker image to Bluemix than you should
-do that now, run
+1) To setup Auto-Scaling click on the Auto-Scaling tab on the left side.
+2) Click on the create policy button on the bottom right side of the page.
+3) Create your scaling policy, see below screenshot to how I setup my scaling policy
+4) Finally click on the policy created and click on the Action button to attach the policy to your container
+Done.
+![Application Diagram](ReadMeImages/policy.png)
 
-```
-$ cf ic build -t my_namespace/bluechatter ./
-```
-Finally you can run `docker-compose -f docker-compose-bluemix.yml up -d --force-recreate` to
-create, start, and run both containers.
+With above 4 steps you have created your auto scaling policy to increase the number of container instances for when needed.
 
-Now that the containers are running you need to bind a public IP address to the
-BlueChatter container in order to access the web app from the browser.  
-First request a public IP if you don't already have one to use.
+### 2.5 Reporting
+First, at a quick look at the container dashboard we can see the usage of your docker container.
+From the dashboard we can see memory used, CPU used and Network traffic.
 
-```
-$ cf ic ip request
-```
+To get more in depth monitoring and reporting, go over to the monitoring and Logs section.
+![Application Diagram](ReadMeImages/monandlogs.png)
 
-Then bind that IP to the BlueChatter container.
 
-```
-$ cf ic ip bind <IP> <container_name_or_ID>
-```
+### 2.6 Vulnerability Advisor
+The Bluemix containers services offers a vulnerability report to each one of the containers deployed to Bluemix, this is highly useful as it provides a deep vulnerability insight to your application.
+To get to the vulnerability advisor section, from your container dashboard click on any of the container instances and then you should see the vulnerability advisor button on the bottom of the page.   
+![Application Diagram](ReadMeImages/Vulnerability01.png)
 
-After your IP is bound you should be able to go to that IP on port 80 and try
-out the app.  For more information on requesting and binding IPs see the
-[Bluemix Documentation](https://console.ng.bluemix.net/docs/containers/container_creating_ov.html#container_cli_ips_ov).
+Looking at the vulnerability advisor section, we can get things like policy violations, vulnerable packages, best practice improvements and security misconfigurations.  
+The two parts that I find very useful would be the vulnerable packages and best practice improvements.  
+From the list of best practices improvements, I can understand things like weak passwords, list Malware found, permission settings and more.
+![Application Diagram](ReadMeImages/Vulnerability02.png)
 
-For additional information about using Docker Compose with IBM Containers see
-the [Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_creating_ov.html#container_compose_ov).
+### 2.7 Why I love working with Docker Containers on Bluemix?
+- Quick and easy deployment, you can deploy your docker application to Bluemix within less then 5 minutes.
+- List of IBM provided docker images and ability to use any other docker images like for example any image from [Docker Hub](https://hub.docker.com/).  
+- Really nice and easy scaling capabilities to do manual or automatic scaling
+- Easy monitoring and logging dashboard  
+- Vulnerability Advisor Dashboard
+- Good documentation support on Docker
+
+
+For additional information about on IBM Containers see the the following links:  
+[Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_index.html)  
+[A-Z Video docker container setup](https://www.youtube.com/watch?v=TfCj2qOXb1g)  
+
 
 ## Testing
-
 After the app is deployed you can test it by opening two different browsers
 and navigating to the URL of the app.  YOU MUST USE TWO DIFFERENT BROWSERS
 AND NOT TWO TABS IN THE SAME BROWSER.  Since we are using long polling
@@ -256,11 +291,7 @@ while one request is still pending.  You can also open the app in a browser
 on your mobile device and try it there as well.
 
 ## License
-
-This code is licensed under Apache v2.  See the LICENSE file in the root of
-the repository.
+This code is licensed under Apache v2.  See the LICENSE file in the root of the repository.
 
 ## Dependencies
-
-For a list of 3rd party dependencies that are used see the package.json file
-in the root of the repository.
+For a list of 3rd party dependencies that are used see the package.json file in the root of the repository.
