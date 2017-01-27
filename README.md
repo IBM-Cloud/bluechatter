@@ -271,15 +271,18 @@ From the list of best practices improvements, I can understand things like weak 
 ### 2.7 Why I love working with Docker Containers on Bluemix?
 - Quick and easy deployment, you can deploy your docker application to Bluemix within less then 5 minutes.
 - List of IBM provided docker images and ability to use any other docker images like for example any image from [Docker Hub](https://hub.docker.com/).  
-- Really nice and easy scaling capabilities to do manual or automatic scaling
+- Auto-recovery and auto-scaling
+- Load-balanced container groups
 - Easy monitoring and logging dashboard  
-- Vulnerability Advisor Dashboard
-- Good documentation support on Docker
+- Security compliance insight such as the vulnerability advisor
 
 
 For additional information about on IBM Containers see the the following links:  
 [Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_index.html)  
+[Docker user manual PDF](ReadMeImages/docker.pdf)   
+[Debugging docker application](https://www.ibm.com/blogs/bluemix/2015/09/using-node-inspector-ibm-containers/)  
 [A-Z Video docker container setup](https://www.youtube.com/watch?v=TfCj2qOXb1g)  
+[Scaling and Auto-Recovery with IBM Containers](https://www.ibm.com/blogs/bluemix/2015/11/spring-boot-application-scaling-auto-recovery-ibm-containers/)  
 
 
 ## Testing
