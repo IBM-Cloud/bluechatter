@@ -279,7 +279,7 @@ From the list of best practices improvements, I can understand things like weak 
 
 For additional information about on IBM Containers see the the following links:  
 [Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_index.html)  
-[Docker user manual PDF](ReadMeImages/docker.pdf)   
+[Docker user manual PDF](https://github.com/IBM-Bluemix/bluechatter/blob/master/ReadMeImages/docker.PDF)   
 [Debugging docker application](https://www.ibm.com/blogs/bluemix/2015/09/using-node-inspector-ibm-containers/)  
 [A-Z Video docker container setup](https://www.youtube.com/watch?v=TfCj2qOXb1g)  
 [Scaling and Auto-Recovery with IBM Containers](https://www.ibm.com/blogs/bluemix/2015/11/spring-boot-application-scaling-auto-recovery-ibm-containers/)  
