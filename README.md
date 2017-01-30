@@ -73,18 +73,18 @@ When one chat server receives a chat message it publishes an event to Redis cont
 Auto Deploy To Bluemix
 ======================
 
-The easiest way to deploy BlueChatter is by clicking on the "Deploy to Bluemix" button in which automatically deploys the application to Bluemix.  
+The easiest way to deploy BlueChatter is by clicking on the "Deploy to Bluemix" button which automatically deploys the application to Bluemix.  
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)  
 
-Using the Deploy To Bluemix button will automatically setup several things for you.  
-First it will create a Git repo in IBM DevOps Services containing the code for the application.
-In addition a deployment pipeline will automatically be setup and run which will deploy the
+Using the Deploy To Bluemix button will automatically set up several things for you.  
+First it will create a Git repository in IBM DevOps Services containing the code for the application.
+In addition, a deployment pipeline will automatically be set up and then run to deploy the
 application to Bluemix for you.  The deployment pipeline will both deploy the application as a
 Cloud Foundry application and in a Docker container.  Both versions of the application will
-share the same route (URL) in Bluemix so hitting that URL you will either be using the Cloud
+share the same route (URL) in Bluemix. Thus, accessing the application URL will either be using the Cloud
 Foundry application or the Docker container.  In addition to deploying the app using Cloud
-Foundry and Docker the pipeline will build a Docker image and place it in your Docker
-registry on Bluemix so you can deploy additional containers based on that image if you want.
+Foundry and Docker, the pipeline will build a Docker image and place it in your Docker
+registry on Bluemix. That way you can deploy additional containers based on that image if you want.
 
 
 
@@ -193,7 +193,7 @@ We will then look on how to scale your docker container on Bluemix to scale your
   ```
 
 
-2_2 Build & run container locally  
+2_2 Build & run container locally
 ---------------------------------
 
 1. Build your docker container
