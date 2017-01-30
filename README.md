@@ -193,7 +193,7 @@ We will then look on how to scale your docker container on Bluemix to scale your
   ```
 
 
-2_2 Build & run container locally
+2_2 Build & run container locally  
 ---------------------------------
 
 1. Build your docker container
