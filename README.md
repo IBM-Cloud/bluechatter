@@ -1,19 +1,51 @@
-## About
+BlueChatter Overview
+======================
+
 The BlueChatter app is a simple chat/IRC type application for your browser where it will allow multiple users to chat when online at the same time.
 The main focus here is to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
-The demo will demonstrate how easily you can deploy and scale your docker container on Bluemix, you will also learn the tools and services you need for when deploying your docker application to Bluemix.
+The demo will demonstrate how easily you can deploy and scale your docker container on [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/), you will also learn the tools and services you need for when deploying your docker application to [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).
 
 See how the browser chat application will looks like:
 ![Application Diagram](ReadMeImages/viewapp.png)
 
-## Target Users:
-- Learn how to deploy, scale and manage a **docker** application to Bluemix.  
-- Learn how to deploy, scale and manage a **Cloud Foundry** application to Bluemix.  
+Table of contents
+=================
+
+  * [BlueChatter Overview](#BlueChatter Overview)
+  * [Table of contents](#table-of-contents)
+  * [Target Users](#Target Users)
+  * [Technologies Used](#Technologies Used)
+  * [Auto Deploy To Bluemix](#Auto Deploy To Bluemix)
+  * [1.0 Cloud Foundry Deployment Approach](#1.0 Cloud Foundry Deployment Approach)
+    * [1.1 Scaling Your Cloud Foundry Application](#1.1 Scaling Your Cloud Foundry Application)
+      * [Manual Scaling](#Manual Scaling)
+      * [Auto Scaling](#Auto Scaling)
+  * [2.0 Docker Deployment Approach](#2.0 Docker Deployment Approach)
+    * [2.1 Setup](#2.1 Setup)
+    * [2.2 Build & run container locally](#2.2 Build & run container locally)
+    * [2.3 Run container on Bluemix](#2.3 Run container on Bluemix)
+    * [2.4 Container Scaling](#2.4 Container Scaling)
+    * [2.6 Vulnerability Advisor](#2.6 Vulnerability Advisor)
+    * [2.7 Why use Docker Containers on Bluemix?](#2.7 Why use Docker Containers on Bluemix?)
+  * [Testing](#Testing)
+  * [License](#License)
+  * [Dependencies](#Dependencies)
+
+
+
+
+Target Users
+============
+
+- Learn how to deploy, scale and manage a **docker** application using [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
+- Learn how to deploy, scale and manage a **Cloud Foundry** application using [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
 - Learn how to create a simple Chat application with using NodeJs and Express.  
 - Learn more on the tooling and reporting when working with Docker Containers.  
 
 
-## Technologies Used
+Technologies Used
+=================
+
 BlueChatter uses [Node.js](http://nodejs.org/) and
 [Express](http://expressjs.com/) for the server.  On the frontend
 BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
@@ -29,14 +61,15 @@ response contains a message or not, the client will issue another request and
 the process continues.
 
 
-The main goal of this application is to demonstrate the deployment and Scaling of Docker container and Cloud Foundry application on Bluemix. We will look at why and when you should deploy your application to a docker container over the classic Cloud Foundry root. You will learn on how to scale your application, scaling is big factor to any production applications, no matter which root you would take you would still need to scale your application for when traffic spike occur. With using the [IBM Bluemix auto scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) service, we can automatically scale our Cloud Foundry Application or Docker Container application. To forwarder explain what scaling means, all scaling is to have multiple instance of the same application running at the same time, this means all users seen the same application while each user is directed to different instance of the application depending on the number of the instances you scale to.
+The main goal of this application is to demonstrate the deployment and Scaling of Docker container and Cloud Foundry application on [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/). We will look at why and when you should deploy your application to a docker container over the classic Cloud Foundry root. You will learn on how to scale your application, scaling is big factor to any production applications, no matter which root you would take you would still need to scale your application for when traffic spike occur. With using the [IBM Bluemix auto scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) service, we can automatically scale our Cloud Foundry Application or Docker Container application. To forwarder explain what scaling means, all scaling is to have multiple instance of the same application running at the same time, this means all users seen the same application while each user is directed to different instance of the application depending on the number of the instances you scale to.
 
 
 Another area we should outline is how do the chat messages happen between the different servers, how do all instance of the applications talk to the same database to offer the chat experience to the users like if they are all on one instance?
 For that we use the [pubsub feature of Redis](http://redis.io/topics/pubsub) to solve this. All the servers will be bound to a single Redis instance and each server is listening for messages on the same channel.
 When one chat server receives a chat message it publishes an event to Redis containing the message. The other servers then get notifications of the new messages and notify their clients of the.  This design allows BlueChatter to scale nicely to meet the demand of its users.
 
-## Automatically Deploying To Bluemix
+Auto Deploy To Bluemix
+======================
 
 The easiest way to deploy BlueChatter is by clicking on the "Deploy to Bluemix" button in which automatically deploys the application to Bluemix.  
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)  
@@ -53,7 +86,8 @@ registry on Bluemix so you can deploy additional containers based on that image 
 
 
 
-## 1.0 Cloud Foundry Deployment Approach
+1.0 Cloud Foundry Deployment Approach
+=====================================
 
 1. Create a Bluemix Account  
 [Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
@@ -92,11 +126,14 @@ registry on Bluemix so you can deploy additional containers based on that image 
 **Done**, now go to the staging domain(`<host>.mybluemix.net`.) and see your app running.
 
 
-### 1.1 Scaling Your Cloud Foundry Application
+1.1 Scaling Your Cloud Foundry Application
+------------------------------------------
 
 Since we are using Redis to send chat messages, you can scale this application as much as you would like and people can be connecting to various servers and still receive chat messages.  We will be looking on how to scale the application runtime instances for when needed, to do this we are going to look at the manual scaling command or use the Auto-Scaling service to automatically increase or decrease the number of application instances based on a policy we set it.
 
-#### Manual Scaling
+Manual Scaling
+--------------
+
 1. Manually scale the application to run 3 instances
   ```
   $ cf scale my-blue-chatter-app-name -i 3
@@ -111,22 +148,33 @@ Note, you can see see which instance you are connecting to in the footer of the 
 If you have more than one instance running chances are the instance id will be different between two different browsers.  
 
 
-#### Auto Scaling
+Auto Scaling
+------------
+
 - It's good to be able to manually scale your application but Manual scaling wont work for many cases, for that reason we need to setup a [Auto-Scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) to automatically scale our application for when needed.
 To learn more on Auto-Scaling checkout the blog post [Handle the Unexpected with Bluemix Auto-Scaling](https://www.ibm.com/blogs/bluemix/2015/04/handle-unexpected-bluemix-auto-scaling/) for detailed descreption on [Auto-Scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html).
 
 
-## 2.0 Docker Deployment Approach
+2.0 Docker Deployment Approach
+==============================
+
 Here we are going to look on how to deploy the BlueChatter application on a Docker container where it will be running on IBM Bluemix.
 We will then look on how to scale your docker container on Bluemix to scale your application where needed. First, lets look at running the BlueChatter application inside a Docker container locally on your machine, next we will deploy the container to Bluemix and then scale it for when needed. Lets get started and have fun.
 
-### 2.1 Setup
+2.1 Setup
+---------
+
 1. Create a Bluemix Account  
 [Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
 
 1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
 
 1. **Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the "docker" command in your terminal window, if you see the list of docker commands then you are good to go.**
+
+1. Install the IBM Bluemix Container Service plug-in to execute commands to IBM Bluemix containers from your terminal window. Install Container Service plug-in by running this command if on OS X.
+  ```
+  $ cf install-plugin https://static-ice.ng.bluemix.net/ibm-containers-mac
+  ```
 
 1. If you have not already, [download node.js 6.7.0 or later][https://nodejs.org/download/] and install it on your local machine.
 
@@ -143,7 +191,8 @@ We will then look on how to scale your docker container on Bluemix to scale your
   ```
 
 
-### 2.2 Build & run container locally
+2.2 Build & run container locally
+---------------------------------
 
 1. Build your docker container
   ```
@@ -166,7 +215,9 @@ Now that you have the IP go to your favorite browser and enter the IP in the add
 you should see the app come up.  (The app is running on port 80 in the container.)
 
 
-### 2.3 Run container on Bluemix
+2.3 Run container on Bluemix
+----------------------------
+
 Before running the container on Bluemix, I recommend you to checkout the Docker container Bluemix documentation to better understand the steps below. Please review the [documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before continuing.
 
 1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool if haven't already.
@@ -237,7 +288,9 @@ Note, a staging domain also been created for us with the name of the container g
 ![Application Diagram](ReadMeImages/containers.png)
 
 
-### 2.4 Container Scaling
+2.4 Container Scaling
+---------------------
+
 The Bluemix containers offers a great scaling and reporting functionality where as a developer you really don't need to worry about any of the underlying infrastructure and scaling scripts.
 Let's look at how to setup a scaling policies and increasing container instances.
 
@@ -250,7 +303,9 @@ Done.
 
 With above 4 steps you have created your auto scaling policy to increase the number of container instances for when needed.
 
-### 2.5 Reporting
+2.5 Reporting
+-------------
+
 First, at a quick look at the container dashboard we can see the usage of your docker container.
 From the dashboard we can see memory used, CPU used and Network traffic.
 
@@ -258,7 +313,9 @@ To get more in depth monitoring and reporting, go over to the monitoring and Log
 ![Application Diagram](ReadMeImages/monandlogs.png)
 
 
-### 2.6 Vulnerability Advisor
+2.6 Vulnerability Advisor
+-------------------------
+
 The Bluemix containers services offers a vulnerability report to each one of the containers deployed to Bluemix, this is highly useful as it provides a deep vulnerability insight to your application.
 To get to the vulnerability advisor section, from your container dashboard click on any of the container instances and then you should see the vulnerability advisor button on the bottom of the page.   
 ![Application Diagram](ReadMeImages/Vulnerability01.png)
@@ -268,7 +325,9 @@ The two parts that I find very useful would be the vulnerable packages and best 
 From the list of best practices improvements, I can understand things like weak passwords, list Malware found, permission settings and more.
 ![Application Diagram](ReadMeImages/Vulnerability02.png)
 
-### 2.7 Why I love working with Docker Containers on Bluemix?
+2.7 Why use Docker Containers on Bluemix?
+---------------------------------------------------------
+
 - Quick and easy deployment, you can deploy your docker application to Bluemix within less then 5 minutes.
 - List of IBM provided docker images and ability to use any other docker images like for example any image from [Docker Hub](https://hub.docker.com/).  
 - Auto-recovery and auto-scaling
@@ -285,7 +344,9 @@ For additional information about on IBM Containers see the the following links:
 [Scaling and Auto-Recovery with IBM Containers](https://www.ibm.com/blogs/bluemix/2015/11/spring-boot-application-scaling-auto-recovery-ibm-containers/)  
 
 
-## Testing
+Testing
+=======
+
 After the app is deployed you can test it by opening two different browsers
 and navigating to the URL of the app.  YOU MUST USE TWO DIFFERENT BROWSERS
 AND NOT TWO TABS IN THE SAME BROWSER.  Since we are using long polling
@@ -293,8 +354,13 @@ browsers will not actually make the same request to the same endpoint
 while one request is still pending.  You can also open the app in a browser
 on your mobile device and try it there as well.
 
-## License
+License
+=======
+
+
 This code is licensed under Apache v2.  See the LICENSE file in the root of the repository.
 
-## Dependencies
+Dependencies
+============
+
 For a list of 3rd party dependencies that are used see the package.json file in the root of the repository.
