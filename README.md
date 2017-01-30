@@ -8,28 +8,29 @@ The demo will demonstrate how easily you can deploy and scale your docker contai
 See how the browser chat application will looks like:
 ![Application Diagram](ReadMeImages/viewapp.png)
 
+
 Table of contents
 =================
 
-  * [BlueChatter Overview](#BlueChatter Overview)
+  * [BlueChatter Overview](#blueChatter-overview)
   * [Table of contents](#table-of-contents)
-  * [Target Users](#Target Users)
-  * [Technologies Used](#Technologies Used)
-  * [Auto Deploy To Bluemix](#Auto Deploy To Bluemix)
-  * [1.0 Cloud Foundry Deployment Approach](#1.0 Cloud Foundry Deployment Approach)
-    * [1.1 Scaling Your Cloud Foundry Application](#1.1 Scaling Your Cloud Foundry Application)
-      * [Manual Scaling](#Manual Scaling)
-      * [Auto Scaling](#Auto Scaling)
-  * [2.0 Docker Deployment Approach](#2.0 Docker Deployment Approach)
-    * [2.1 Setup](#2.1 Setup)
-    * [2.2 Build & run container locally](#2.2 Build & run container locally)
-    * [2.3 Run container on Bluemix](#2.3 Run container on Bluemix)
-    * [2.4 Container Scaling](#2.4 Container Scaling)
-    * [2.6 Vulnerability Advisor](#2.6 Vulnerability Advisor)
-    * [2.7 Why use Docker Containers on Bluemix?](#2.7 Why use Docker Containers on Bluemix?)
-  * [Testing](#Testing)
-  * [License](#License)
-  * [Dependencies](#Dependencies)
+  * [Target Users](#target-users)
+  * [Technologies Used](#technologies-used)
+  * [Auto Deploy To Bluemix](#auto-deploy-to-bluemix)
+  * [1.0 Cloud Foundry Deployment Approach](#1.0-cloud-foundry-deployment-approach)
+    * [1.1 Scaling Your Cloud Foundry Application](#1.1-scaling-your-cloud-foundry-application)
+      * [Manual Scaling](#manual-scaling)
+      * [Auto Scaling](#auto-scaling)
+  * [2.0 Docker Deployment Approach](#2.0-docker-deployment-approach)
+    * [2.1 Setup](#2.1-setup)
+    * [2.2 Build & run container locally](#2.2-build-&-run-container-locally)
+    * [2.3 Run container on Bluemix](#2.3-run-container-on-bluemix)
+    * [2.4 Container Scaling](#2.4-container-scaling)
+    * [2.6 Vulnerability Advisor](#2.6-vulnerability-advisor)
+    * [2.7 Why use Docker Containers on Bluemix?](#2.7-why-use-docker-containers-on-bluemix?)
+  * [Testing](#testing)
+  * [License](#license)
+  * [Dependencies](#dependencies)
 
 
 
