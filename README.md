@@ -17,17 +17,18 @@ Table of contents
   * [Target Users](#target-users)
   * [Technologies Used](#technologies-used)
   * [Auto Deploy To Bluemix](#auto-deploy-to-bluemix)
-  * [1.0 Cloud Foundry Deployment Approach](#1.0-cloud-foundry-deployment-approach)
-    * [1.1 Scaling Your Cloud Foundry Application](#1.1-scaling-your-cloud-foundry-application)
+  * [1.0 Cloud Foundry Deployment Approach](#1-cloud-foundry-deployment-approach)
+    * [1.1 Scaling Your Cloud Foundry Application](#scaling-your-cloud-foundry-application)
       * [Manual Scaling](#manual-scaling)
       * [Auto Scaling](#auto-scaling)
-  * [2.0 Docker Deployment Approach](#2.0-docker-deployment-approach)
-    * [2.1 Setup](#2.1-setup)
-    * [2.2 Build & run container locally](#2.2-build-&-run-container-locally)
-    * [2.3 Run container on Bluemix](#2.3-run-container-on-bluemix)
-    * [2.4 Container Scaling](#2.4-container-scaling)
-    * [2.6 Vulnerability Advisor](#2.6-vulnerability-advisor)
-    * [2.7 Why use Docker Containers on Bluemix?](#2.7-why-use-docker-containers-on-bluemix?)
+  * [2.0 Docker Deployment Approach](#2-docker-deployment-approach)
+    * [2.1 Setup](#2_1-setup)
+    * [2.2 Build & run container locally](#2_2-build-&-run-container-locally)
+    * [2.3 Run container on Bluemix](#2_3-run-container-on-bluemix)
+    * [2.4 Container Scaling](#2_4-container-scaling)
+    * [2.5 Reporting](#2_5-reporting)
+    * [2.6 Vulnerability Advisor](#2_6-vulnerability-advisor)
+    * [2.7 Why use Docker Containers on Bluemix?](#2_7-why-use-docker-containers-on-bluemix?)
   * [Testing](#testing)
   * [License](#license)
   * [Dependencies](#dependencies)
@@ -87,8 +88,8 @@ registry on Bluemix so you can deploy additional containers based on that image 
 
 
 
-1.0 Cloud Foundry Deployment Approach
-=====================================
+1 Cloud Foundry Deployment Approach
+=================================
 
 1. Create a Bluemix Account  
 [Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
@@ -127,7 +128,7 @@ registry on Bluemix so you can deploy additional containers based on that image 
 **Done**, now go to the staging domain(`<host>.mybluemix.net`.) and see your app running.
 
 
-1.1 Scaling Your Cloud Foundry Application
+Scaling Your Cloud Foundry Application
 ------------------------------------------
 
 Since we are using Redis to send chat messages, you can scale this application as much as you would like and people can be connecting to various servers and still receive chat messages.  We will be looking on how to scale the application runtime instances for when needed, to do this we are going to look at the manual scaling command or use the Auto-Scaling service to automatically increase or decrease the number of application instances based on a policy we set it.
@@ -156,13 +157,13 @@ Auto Scaling
 To learn more on Auto-Scaling checkout the blog post [Handle the Unexpected with Bluemix Auto-Scaling](https://www.ibm.com/blogs/bluemix/2015/04/handle-unexpected-bluemix-auto-scaling/) for detailed descreption on [Auto-Scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html).
 
 
-2.0 Docker Deployment Approach
+2 Docker Deployment Approach
 ==============================
 
 Here we are going to look on how to deploy the BlueChatter application on a Docker container where it will be running on IBM Bluemix.
 We will then look on how to scale your docker container on Bluemix to scale your application where needed. First, lets look at running the BlueChatter application inside a Docker container locally on your machine, next we will deploy the container to Bluemix and then scale it for when needed. Lets get started and have fun.
 
-2.1 Setup
+2_1 Setup
 ---------
 
 1. Create a Bluemix Account  
@@ -192,7 +193,7 @@ We will then look on how to scale your docker container on Bluemix to scale your
   ```
 
 
-2.2 Build & run container locally
+2_2 Build & run container locally
 ---------------------------------
 
 1. Build your docker container
@@ -216,7 +217,7 @@ Now that you have the IP go to your favorite browser and enter the IP in the add
 you should see the app come up.  (The app is running on port 80 in the container.)
 
 
-2.3 Run container on Bluemix
+2_3 Run container on Bluemix
 ----------------------------
 
 Before running the container on Bluemix, I recommend you to checkout the Docker container Bluemix documentation to better understand the steps below. Please review the [documentation](https://www.ng.bluemix.net/docs/containers/container_index.html) on Bluemix before continuing.
@@ -289,7 +290,7 @@ Note, a staging domain also been created for us with the name of the container g
 ![Application Diagram](ReadMeImages/containers.png)
 
 
-2.4 Container Scaling
+2_4 Container Scaling
 ---------------------
 
 The Bluemix containers offers a great scaling and reporting functionality where as a developer you really don't need to worry about any of the underlying infrastructure and scaling scripts.
@@ -304,7 +305,7 @@ Done.
 
 With above 4 steps you have created your auto scaling policy to increase the number of container instances for when needed.
 
-2.5 Reporting
+2_5 Reporting
 -------------
 
 First, at a quick look at the container dashboard we can see the usage of your docker container.
@@ -314,7 +315,7 @@ To get more in depth monitoring and reporting, go over to the monitoring and Log
 ![Application Diagram](ReadMeImages/monandlogs.png)
 
 
-2.6 Vulnerability Advisor
+2_6 Vulnerability Advisor
 -------------------------
 
 The Bluemix containers services offers a vulnerability report to each one of the containers deployed to Bluemix, this is highly useful as it provides a deep vulnerability insight to your application.
@@ -326,7 +327,7 @@ The two parts that I find very useful would be the vulnerable packages and best 
 From the list of best practices improvements, I can understand things like weak passwords, list Malware found, permission settings and more.
 ![Application Diagram](ReadMeImages/Vulnerability02.png)
 
-2.7 Why use Docker Containers on Bluemix?
+2_7 Why use Docker Containers on Bluemix?
 ---------------------------------------------------------
 
 - Quick and easy deployment, you can deploy your docker application to Bluemix within less then 5 minutes.
