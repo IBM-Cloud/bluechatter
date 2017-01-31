@@ -63,7 +63,7 @@ body {
   border-top: 1px solid #e5e5e5;
 }
 .footerOuter{
-    position: absolute;
+    position: static;;
     bottom: 90px;
     font-size: 15px;
     width: 100%;
@@ -73,4 +73,5 @@ body {
     color: #333;
     text-align: center;
     clear: both;
+    margin-top: 100px;
 }
