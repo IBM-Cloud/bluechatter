@@ -1,11 +1,12 @@
 BlueChatter Overview
 ======================
 
-The BlueChatter app is a simple chat/IRC type application for your browser where it will allow multiple users to chat when online at the same time.
-The main focus here is to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
-The demo will demonstrate how easily you can deploy and scale your docker container on [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/), you will also learn the tools and services you need for when deploying your docker application to [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).
+The BlueChatter app is a simple chat/IRC type application for your browser which allows multiple users to chat when online at the same time.
+The sample app is used to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
+The demo demonstrates how easily you can deploy and scale your docker container on [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/). In addition, it introduces the tools and services you need for deploying your docker applications to [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).
 
-See how the browser chat application will looks like:
+
+See how the browser chat application looks like:
 ![Application Diagram](ReadMeImages/viewapp.png)
 
 
@@ -14,7 +15,7 @@ Table of contents
 
   * [BlueChatter Overview](#blueChatter-overview)
   * [Table of contents](#table-of-contents)
-  * [Target Users](#target-users)
+  * [Learning Objectives](#learning-objectives)
   * [Technologies Used](#technologies-used)
   * [Auto Deploy To Bluemix](#auto-deploy-to-bluemix)
   * [1.0 Cloud Foundry Deployment Approach](#1-cloud-foundry-deployment-approach)
@@ -36,12 +37,12 @@ Table of contents
 
 
 
-Target Users
-============
+Learning Objectives
+===================
 
-- Learn how to deploy, scale and manage a **docker** application using [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
-- Learn how to deploy, scale and manage a **Cloud Foundry** application using [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
-- Learn how to create a simple Chat application with using NodeJs and Express.  
+- Learn how to deploy, scale and manage a **docker** application using [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
+- Learn how to deploy, scale and manage a **Cloud Foundry** application using [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
+- Learn how to create a simple Chat application with NodeJs and Express.  
 - Learn more on the tooling and reporting when working with Docker Containers.  
 
 
@@ -55,15 +56,15 @@ BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
 is how the communication of messages is done.  The application uses [long
 polling](http://en.wikipedia.org/wiki/Push_technology#Long_polling) to enable
 the clients (browsers) to listen for new messages.  Once the
-app loads successfully a client then issues a request to the server.  The server waits to respond
+app loads successfully, a client then issues a request to the server.  The server waits to respond
 to the request until it receives a message.  If no message is received from any
-of the chat participants it responds back to the client with a 204 - no content.
+of the chat participants, it responds back to the client with a 204 - no content.
 As soon as the client gets a response from the server, regardless of whether that
 response contains a message or not, the client will issue another request and
 the process continues.
 
 
-The main goal of this application is to demonstrate the deployment and Scaling of Docker container and Cloud Foundry application on [IBM-Bluemix](https://www.ibm.com/cloud-computing/bluemix/). We will look at why and when you should deploy your application to a docker container over the classic Cloud Foundry root. You will learn on how to scale your application, scaling is big factor to any production applications, no matter which root you would take you would still need to scale your application for when traffic spike occur. With using the [IBM Bluemix auto scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) service, we can automatically scale our Cloud Foundry Application or Docker Container application. To forwarder explain what scaling means, all scaling is to have multiple instance of the same application running at the same time, this means all users seen the same application while each user is directed to different instance of the application depending on the number of the instances you scale to.
+The main goal of this application is to demonstrate the deployment and scaling of Docker container and Cloud Foundry application on [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/). We will look at why and when you should deploy your application to a docker container over the classic Cloud Foundry root. You will learn on how to scale your application, scaling is big factor to any production applications, no matter which root you would take you would still need to scale your application for when traffic spike occur. With using the [IBM Bluemix auto scaling](https://console.ng.bluemix.net/docs/services/Auto-Scaling/index.html) service, we can automatically scale our Cloud Foundry Application or Docker Container application. To forwarder explain what scaling means, all scaling is to have multiple instance of the same application running at the same time, this means all users seen the same application while each user is directed to different instance of the application depending on the number of the instances you scale to.
 
 
 Another area we should outline is how do the chat messages happen between the different servers, how do all instance of the applications talk to the same database to offer the chat experience to the users like if they are all on one instance?
