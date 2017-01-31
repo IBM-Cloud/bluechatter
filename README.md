@@ -263,7 +263,7 @@ in the containers section you should see the BlueChatter image listed.
 We can create a service on Bluemix using the Bluemix UI or the terminal using the command below.
 Enter this command in your terminal to create the Redis service:
   ```
-  $ create-service rediscloud 30mb redis-chatter
+  $ cf create-service rediscloud 30mb redis-chatter
   ```
 
 

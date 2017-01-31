@@ -16,10 +16,23 @@
 
 #main-container {
   margin: 0 auto;
+
 }
 
 #main-container h1 {
   text-align: center;
+  font-size: 60px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    padding-top: 20px;
+}
+body {
+    background-color: #dfe6eb;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .center {
@@ -50,5 +63,14 @@
   border-top: 1px solid #e5e5e5;
 }
 .footerOuter{
+    position: absolute;
+    bottom: 90px;
+    font-size: 15px;
+    width: 100%;
+    height: 40px;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    color: #333;
     text-align: center;
+    clear: both;
 }
