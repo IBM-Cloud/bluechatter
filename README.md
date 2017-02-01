@@ -7,8 +7,8 @@ The demo demonstrates how easily you can deploy and scale your docker container 
 
 
 See how the browser chat application looks like:
-![Application Diagram](ReadMeImages/viewapp.png)
-
+![Application Diagram](ReadMeImages/viewapp.png)  
+[https://bluechattercontainergroup.mybluemix.net/](https://bluechattercontainergroup.mybluemix.net/)  
 
 Table of contents
 =================
