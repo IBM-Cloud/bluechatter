@@ -258,18 +258,6 @@ Now we need to switch over to Bluemix UI and complete the steps required to have
 
 **Step 1)** Go over [Bluemix catalog container](https://console.ng.bluemix.net/catalog/?taxonomyNavigation=apps&category=containerImages) area and click on the "bluechatter" registry that we created. ![Application Diagram](ReadMeImages/registry.png)
 
-**Step 2)** You have the option to create single or scalable container, in our case we will select the scalable container option to take the full advantage of the scaling capabilities.   
-Here are the items you need to select to create the container:  
-- Select the scalable option for container type  
-- Give your container a name, I named my container bluechatterContainerGroup  
-- Select a container size, I selected Nano 128MB 8GB Storage for this example but you can select the size in which best for your setup.
-- Select number of instances, I selected 3 instances  
-- Host leave it as default  
-- HTTP Port should be 80 and enable automatic recovery option if you wish.  
-- Last and most important step, bind the Redis service to the container, to do this, click on the **"Advanced Options"** button then scroll down to select and **add** the Redis service.  
-- Click on the Create button.
-
-
 **Step 2)** You have the option to create a single or scalable container, in our case, we will select the scalable container option to take the full advantage of the scaling capabilities.  
 Here are the items you need to choose to create the container:  
 
