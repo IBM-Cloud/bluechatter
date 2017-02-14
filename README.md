@@ -1,9 +1,7 @@
 BlueChatter Overview
 ======================
 
-The BlueChatter app is a simple chat/IRC type application for your browser which allows multiple users to chat when online at the same time.
-The sample app is used to showcase how to deploy an application to the Cloud using the Cloud Foundry and docker container approach.
-The demo demonstrates how easily you can deploy and scale your docker container on [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/). In addition, it introduces the tools and services you need for deploying your docker applications to [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).
+The BlueChatter app is a simple chat/IRC type application for your browser which allows multiple users to chat when online at the same time. The sample app is used to showcase how to deploy an application to the Cloud using the Cloud Foundry and Docker container approach. The demo demonstrates how quickly you can deploy and scale your Docker container on [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/). Also, it introduces the tools and services you need for deploying your Docker applications to [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).
 
 
 See how the browser chat application looks like:
@@ -50,9 +48,9 @@ Technologies Used
 =================
 
 BlueChatter uses [Node.js](http://nodejs.org/) and
-[Express](http://expressjs.com/) for the server.  On the frontend
+[Express](http://expressjs.com/) for the server.  On the frontend,
 BlueChatter uses [Bootstrap](http://getbootstrap.com/) and
-[JQuery](http://jquery.com/).  The interesting part of this application
+[Jquery](http://jquery.com/).  The interesting part of this application
 is how the communication of messages is done.  The application uses [long
 polling](http://en.wikipedia.org/wiki/Push_technology#Long_polling) to enable
 the clients (browsers) to listen for new messages.  Once the
@@ -77,16 +75,7 @@ Auto Deploy To Bluemix
 The easiest way to deploy BlueChatter is by clicking on the "Deploy to Bluemix" button which automatically deploys the application to Bluemix.  
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/IBM-Bluemix/bluechatter)  
 
-Using the Deploy To Bluemix button will automatically set up several things for you.  
-First it will create a Git repository in IBM DevOps Services containing the code for the application.
-In addition, a deployment pipeline will automatically be set up and then run to deploy the
-application to Bluemix for you.  The deployment pipeline will both deploy the application as a
-Cloud Foundry application and in a Docker container.  Both versions of the application will
-share the same route (URL) in Bluemix. Thus, accessing the application URL will either be using the Cloud
-Foundry application or the Docker container.  In addition to deploying the app using Cloud
-Foundry and Docker, the pipeline will build a Docker image and place it in your Docker
-registry on Bluemix. That way you can deploy additional containers based on that image if you want.
-
+Using the Deploy To Bluemix button will automatically set up several things for you. First, it will create a Git repository in IBM DevOps Services containing the code for the application. Also, a deployment pipeline will automatically be set up and then run to deploy the application to Bluemix for you. The deployment pipeline will both deploy the application as a Cloud Foundry application and in a Docker container. Both versions of the application will share the same route (URL) in Bluemix. Thus, accessing the application URL will either be using the Cloud Foundry application or the Docker container. In addition to deploying the app using Cloud Foundry and Docker, the pipeline will build a Docker image and place it in your Docker registry on Bluemix. That way you can deploy additional containers based on that image if you want.
 
 
 1 Cloud Foundry Deployment Approach
@@ -146,10 +135,8 @@ Manual Scaling
   ```
    $ cf app my-blue-chatter-app-name
   ```
-Now switch over to your staging domain(`<host>.mybluemix.net`.) to see your running application.
-Note, you can see see which instance you are connecting to in the footer of the application.  
-If you have more than one instance running chances are the instance id will be different between two different browsers.  
-
+Now switch over to your staging domain(`<host>.mybluemix.net`.) to see your running application. Note, you know which instance you are connecting to in the footer of the form.
+If you have more than one instance running chances are the instance id will be different between two different browsers.
 
 Auto Scaling
 ------------
@@ -161,8 +148,7 @@ To learn more on Auto-Scaling checkout the blog post [Handle the Unexpected with
 2 Docker Deployment Approach
 ==============================
 
-Here we are going to look on how to deploy the BlueChatter application on a Docker container where it will be running on IBM Bluemix.
-We will then look on how to scale your docker container on Bluemix to scale your application where needed. First, lets look at running the BlueChatter application inside a Docker container locally on your machine, next we will deploy the container to Bluemix and then scale it for when needed. Lets get started and have fun.
+Here we are going to look on how to deploy the BlueChatter application on a Docker container where it will be running on IBM Bluemix. We will then look on how to scale your Docker container on Bluemix to scale your application where needed. First, let's look at running the BlueChatter application inside a Docker container locally on your machine. Next, we will deploy the container to Bluemix and then scale it for when needed. Let's get started and have fun.
 
 2_1 Setup
 ---------
@@ -172,7 +158,7 @@ We will then look on how to scale your docker container on Bluemix to scale your
 
 1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
 
-1. **Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the "docker" command in your terminal window, if you see the list of docker commands then you are good to go.**
+1. **Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the "docker" command in your terminal window, if you see the list of docker commands, then you are ready to go.**
 
 1. Install the IBM Bluemix Container Service plug-in to execute commands to IBM Bluemix containers from your terminal window. Install Container Service plug-in by running this command if on OS X.
   ```
@@ -209,7 +195,7 @@ We will then look on how to scale your docker container on Bluemix to scale your
 
 **Done,** now go to [http://localhost](http://localhost) to see your app running if you are on a Mac Linux.   
 
-- On Windows you will need the IP address of your Docker Machine VM to test the application.
+- On Windows, you will need the IP address of your Docker Machine VM to test the application.
 Run the following command, replacing `machine-name` with the name of your Docker Machine.
 ```
 $ docker-machine ip machine-name
@@ -242,7 +228,7 @@ If you are on Linux or windows then find the [installation command here](https:/
   ```
 
 1. After you have logged in you can build an image for the BlueChatter application on Bluemix.
-From the root of BlueChatter application run the following commnand replacing namespace
+From the root of BlueChatter application run the following command replacing namespace
 with your namespace for the IBM Containers service.  (If you don't know what your namespace is
 run `$ cf ic namespace get`.)
   ```
@@ -252,6 +238,8 @@ run `$ cf ic namespace get`.)
   The above `build` command will push the code for Bluechatter to the IBM Containers Docker service
   and run a `docker build` on that code.  Once the build finishes the resulting image will be
   deployed to your Docker registry on Bluemix.  You can verify this by running
+
+  The above `build` command will push the Bluechatter application to the IBM Containers Docker service and run a `docker build`  on that code. Once the build finishes the resulting image will be deployed to your Docker registry on Bluemix. You can verify this by running
   ```
   $ cf ic images
   ```
@@ -259,16 +247,14 @@ You should see a new image with the tag `namespace/bluechatter` listed in the im
 You can also verify this by going to the [catalog](https://console.ng.bluemix.net/catalog/) on Bluemix,
 in the containers section you should see the BlueChatter image listed.
 
-1. Our BlueChatter application is using the Redis cloud service to store in memory the chat communication, lets go ahead and great the Redis service.
-We can create a service on Bluemix using the Bluemix UI or the terminal using the command below.
-Enter this command in your terminal to create the Redis service:
+1. Our BlueChatter application is using the Redis cloud service to store in memory the chat communication, let's go ahead and use the Redis service. We can create a service on Bluemix using the Bluemix UI or the terminal using the command below. Enter this command in your terminal to create the Redis service:
   ```
   $ cf create-service rediscloud 30mb redis-chatter
   ```
 
 
 #### Steps to be done on Bluemix UI
-Now we need to switch over to Bluemix UI and complete the steps required to have our docker image running inside a private docker container repository on Bluemix.
+Now we need to switch over to Bluemix UI and complete the steps required to have our Docker image running inside a private docker container repository on Bluemix.
 
 **Step 1)** Go over [Bluemix catalog container](https://console.ng.bluemix.net/catalog/?taxonomyNavigation=apps&category=containerImages) area and click on the "bluechatter" registry that we created. ![Application Diagram](ReadMeImages/registry.png)
 
@@ -282,6 +268,19 @@ Here are the items you need to select to create the container:
 - HTTP Port should be 80 and enable automatic recovery option if you wish.  
 - Last and most important step, bind the Redis service to the container, to do this, click on the **"Advanced Options"** button then scroll down to select and **add** the Redis service.  
 - Click on the Create button.
+
+
+**Step 2)** You have the option to create a single or scalable container, in our case, we will select the scalable container option to take the full advantage of the scaling capabilities.  
+Here are the items you need to choose to create the container:  
+
+- Select the scalable option for container type  
+- Give your container a name, and I named my container bluechatterContainerGroup  
+- Pick a container size, I chose Nano 128MB 8GB Storage for this example, but you can choose the size in which best for your setup.  
+- Select number of instances, I chose three instances  
+- Host leave it as default  
+- HTTP Port should be 80 and enable automatic recovery option if you wish.  
+- Last and most important step, bind the Redis service to the container, to do this, click on the "Advanced Options" button then scroll   down to select and add the Redis service.  
+- Click on the Create button.   
 ![Application Diagram](ReadMeImages/configuration.png)
 
 
@@ -294,44 +293,40 @@ Note, a staging domain also been created for us with the name of the container g
 2_4 Container Scaling
 ---------------------
 
-The Bluemix containers offers a great scaling and reporting functionality where as a developer you really don't need to worry about any of the underlying infrastructure and scaling scripts.
-Let's look at how to setup a scaling policies and increasing container instances.
+The Bluemix containers offer an excellent scaling and reporting functionality where as a developer you don't need to worry about any of the underlying infrastructure and scaling scripts. Let's look at how to setup scaling policies and increasing container instances.  
 
-1) To setup Auto-Scaling click on the Auto-Scaling tab on the left side.
-2) Click on the create policy button on the bottom right side of the page.
-3) Create your scaling policy, see below screenshot to how I setup my scaling policy
-4) Finally click on the policy created and click on the Action button to attach the policy to your container
-Done.
+1) To setup Auto-Scaling click on the Auto-Scaling tab on the left side.   
+2) Click on the create policy button on the bottom right side of the page.     
+3) Create your scaling policy, see below screenshot to how I setup my scaling policy.   
+4) Finally click on the policy created and click on the Action button to attach the policy to your container Done.   
 ![Application Diagram](ReadMeImages/policy.png)
 
-With above 4 steps you have created your auto scaling policy to increase the number of container instances for when needed.
+With above four steps you have created your auto scaling policy to increase the number of container instances for when needed.  
 
 2_5 Reporting
 -------------
 
-First, at a quick look at the container dashboard we can see the usage of your docker container.
-From the dashboard we can see memory used, CPU used and Network traffic.
+First, at a quick look at the container dashboard, we can see the usage of your Docker container. From the dashboard we can see memory used, CPU used and Network traffic.  
 
-To get more in depth monitoring and reporting, go over to the monitoring and Logs section.
+To get more in-depth monitoring and reporting, go over to the monitoring and Logs section.  
 ![Application Diagram](ReadMeImages/monandlogs.png)
 
 
 2_6 Vulnerability Advisor
 -------------------------
 
-The Bluemix containers services offers a vulnerability report to each one of the containers deployed to Bluemix, this is highly useful as it provides a deep vulnerability insight to your application.
-To get to the vulnerability advisor section, from your container dashboard click on any of the container instances and then you should see the vulnerability advisor button on the bottom of the page.   
+The Bluemix containers services offer a vulnerability report to each one of the containers deployed to Bluemix. This is highly useful as it provides an in-depth vulnerability insight to your application. To get to the vulnerability advisor section, from your container dashboard click on any of the container instances and then you should see the vulnerability Advisor button on the bottom of the page.
 ![Application Diagram](ReadMeImages/Vulnerability01.png)
 
-Looking at the vulnerability advisor section, we can get things like policy violations, vulnerable packages, best practice improvements and security misconfigurations.  
-The two parts that I find very useful would be the vulnerable packages and best practice improvements.  
-From the list of best practices improvements, I can understand things like weak passwords, list Malware found, permission settings and more.
+Looking at the vulnerability advisor section, we can get things like policy violations, vulnerable packages, best practice improvements and security misconfigurations.  The two parts that I find very useful would be the vulnerable packages and best practice improvements.  
+From the list of best practices improvements, I can understand things like weak passwords; list Malware found, permission settings and more.
+
 ![Application Diagram](ReadMeImages/Vulnerability02.png)
 
 2_7 Why use Docker Containers on Bluemix?
 ---------------------------------------------------------
 
-- Quick and easy deployment, you can deploy your docker application to Bluemix within less then 5 minutes.
+- Quick and easy deployment, you can deploy your docker application to Bluemix within less than 5 minutes.
 - List of IBM provided docker images and ability to use any other docker images like for example any image from [Docker Hub](https://hub.docker.com/).  
 - Auto-recovery and auto-scaling
 - Load-balanced container groups
@@ -339,7 +334,7 @@ From the list of best practices improvements, I can understand things like weak 
 - Security compliance insight such as the vulnerability advisor
 
 
-For additional information about on IBM Containers see the the following links:  
+For additional information about on IBM Containers see the following links:  
 [Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_index.html)  
 [Docker user manual PDF](https://github.com/IBM-Bluemix/bluechatter/blob/master/ReadMeImages/docker.PDF)   
 [Debugging docker application](https://www.ibm.com/blogs/bluemix/2015/09/using-node-inspector-ibm-containers/)  
@@ -350,12 +345,12 @@ For additional information about on IBM Containers see the the following links:
 Testing
 =======
 
-After the app is deployed you can test it by opening two different browsers
+After the app is deployed, you can test it by opening two different browsers
 and navigating to the URL of the app.  YOU MUST USE TWO DIFFERENT BROWSERS
-AND NOT TWO TABS IN THE SAME BROWSER.  Since we are using long polling
-browsers will not actually make the same request to the same endpoint
+AND NOT TWO TABS IN THE SAME BROWSER.  Since we utilize long polling
+browsers will not make the same request to the same endpoint
 while one request is still pending.  You can also open the app in a browser
-on your mobile device and try it there as well.
+on your mobile device and try it there as well.  
 
 License
 =======
