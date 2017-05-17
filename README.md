@@ -503,7 +503,7 @@ A Kubernetes service groups a set of pods and provides network connection to the
     In the screenshots below you can see the BlueChatter Web and Redis pods created on the right.
     ![Application Diagram](ReadMeImages/wavecloud.png)
 
-1. **Additionally** we can also view logs locally if you don't like using the graphical tool, a tool like kubetail can be used to tail the logs of multiple pods https://github.com/johanhaleby/kubetail. Once installed you can do kutetail fibo to watch the Fibonacci service logs.
+1. **Additionally** we can also view logs locally if you don't like using the graphical tool, a tool like kubetail can be used to tail the logs of multiple pods https://github.com/johanhaleby/kubetail. Once installed you can do kutetail fibo to watch the logs.
 
     
 3_6 Manual Scaling 
