@@ -36,6 +36,7 @@ Table of contents
     * [3.5 View Cluster Graphically ](#3_5-view-cluster-graphically)
     * [3.6 Manual Scaling](#3_6-manual-scaling)
     * [3.7 Automatic Scaling](#3_7-automatic-scaling) 
+    * [3.8 Why use the Kubernetes service on Bluemix?](#3_8-Why-use-the-Kubernetes-service-on-Bluemix?)
   * [Useful Kubernetes commands](#useful-kubernetes-commands)
   * [License](#license)
   * [Dependencies](#dependencies)
@@ -550,6 +551,14 @@ A Kubernetes service groups a set of pods and provides network connection to the
     ```
     kubectl scale --replicas=1 -f kubernetes.yml
     ```
+
+3_8 Why use the Kubernetes service on Bluemix?
+----------------------------------------------
+![Why Kubernetes Service on Bluemix?](ReadMeImages/whykubernetes.png) 
+
+For more details, visit [IBM Bluemix Container Service](https://www.ibm.com/cloud-computing/bluemix/containers)
+
+
 **Done!**    
 
 
