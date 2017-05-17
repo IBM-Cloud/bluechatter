@@ -28,7 +28,15 @@ Table of contents
     * [2.5 Reporting](#2_5-reporting)
     * [2.6 Vulnerability Advisor](#2_6-vulnerability-advisor)
     * [2.7 Why use Docker Containers on Bluemix?](#2_7-why-use-docker-containers-on-bluemix?)
-  * [Testing](#testing)
+  * [3.0 Kubernetes Deployment Approach](#3-kubernetes-deployment-approach)
+    * [3.1 Requirements](#3_1-requirements)
+    * [3.2 Build the Docker image](#3_2-build-the-docker-image)
+    * [3.3 Create a cluster](#3_3-create-a-cluster)
+    * [3.4 Deploy the cluster](#3_4-deploy-the-cluster)
+    * [3.5 View Cluster Graphically ](#3_5-view-cluster-graphically)
+    * [3.6 Manual Scaling](#3_6-manual-scaling)
+    * [3.7 Automatic Scaling](#3_7-automatic-scaling) 
+  * [Useful Kubernetes commands](#useful-kubernetes-commands)
   * [License](#license)
   * [Dependencies](#dependencies)
 
@@ -37,11 +45,11 @@ Table of contents
 
 Learning Objectives
 ===================
-
-- Learn how to deploy, scale and manage a **docker** application using [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
-- Learn how to deploy, scale and manage a **Cloud Foundry** application using [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
+- Learn how to deploy and scale **Cloud Foundry** application using [IBM Bluemix](https://www.ibm.com/cloud-computing/bluemix/).  
+- Learn how to deploy and scale a **docker container** application using [IBM Bluemix Docker service](https://console.ng.bluemix.net/docs/containers/cs_classic.html#cs_classic).  
+- Learn how to deploy and scale a **Kubernetes Cluster** using [IBM Bluemix Kubernetes approach](https://console.ng.bluemix.net/docs/containers/cs_ov.html#cs_ov).  
 - Learn how to create a simple Chat application with NodeJs and Express.  
-- Learn more on the tooling and reporting when working with Docker Containers.  
+- Learn more on the tooling and reporting when working with Docker Containers and Kubernetes clusters. 
 
 
 Technologies Used
@@ -311,39 +319,276 @@ From the list of best practices improvements, I can understand things like weak 
 
 ![Application Diagram](ReadMeImages/Vulnerability02.png)
 
-2_7 Why use Docker Containers on Bluemix?
----------------------------------------------------------
+3 Kubernetes Deployment Approach
+==============================
+IBM Bluemix now support Kubernetes clusters within the platform, kubernetes is the future of docker applications so lets explore how to deploy the BlueChatter application as a Kubernetes cluster. 
+There are few compounds that you must understand before deploying a kubernetes cluster. 
 
-- Quick and easy deployment, you can deploy your docker application to Bluemix within less than 5 minutes.
-- List of IBM provided docker images and ability to use any other docker images like for example any image from [Docker Hub](https://hub.docker.com/).  
-- Auto-recovery and auto-scaling
-- Load-balanced container groups
-- Easy monitoring and logging dashboard  
-- Security compliance insight such as the vulnerability advisor
+**Cluster**  
+A Kubernetes cluster consists of one or more virtual machines that are called worker nodes. 
+
+**Pods**  
+Every containerized app that is deployed into a Kubernetes cluster is deployed, run, and managed by a pod. Pods represent the smallest deployable unit in a Kubernetes cluster and are used to group together containers that must be treated as a single unit.
+
+**Deployment**  
+A deployment is a Kubernetes resource where you specify your containers and other Kubernetes resources that are required to run your app, such as persistent storage, services, or annotations.
+
+**Service**  
+A Kubernetes service groups a set of pods and provides network connection to these pods for other services in the cluster without exposing the actual private IP address of each pod. You can use a service to make your app available within your cluster or to the public internet.
+
+[Learn more on these compounds here](https://console.ng.bluemix.net/docs/containers/cs_ov.html#cs_ov)
+
+3_1 Requirements
+---------
+
+* An IBM Bluemix account. Either [sign up][bluemix_signup_url], or use an existing account.
+* [Bluemix CLI](https://clis.ng.bluemix.net/ui/home.html)
+* [Bluemix Container Registry plugin](https://console.ng.bluemix.net/docs/cli/plugins/registry/index.html)
+* [Bluemix Container Service plugin](https://console.ng.bluemix.net/docs/containers/cs_cli_devtools.html)
+* [Node.js](https://nodejs.org), version 6.9.1 (or later)
+* [Kubernetes CLI (kubectl)](https://kubernetes.io/docs/tasks/kubectl/install/) version 1.5.3 (or later)
+* [Docker CLI](https://docs.docker.com/engine/installation/) version 1.9 (or later)
 
 
-For additional information about on IBM Containers see the following links:  
+3_2 Build the Docker image
+---------
+1. Clone the app to your local environment from your terminal using the following command
+    
+    ```
+      git clone https://github.com/IBM-Bluemix/bluechatter.git
+    ```
+
+1. `cd` into the `bluechatter` folder that you cloned
+    
+    ```
+      cd bluechatter
+    ```
+    
+1. Start the Docker engine on your local computer
+   > See the [Docker installation instructions](https://docs.docker.com/engine/installation/) if you don't yet have the Docker engine installed locally or need help in starting it.
+
+1. Log the local Docker client in to IBM Bluemix Container Registry:
+
+   ```
+   bx cr login
+   ```
+
+   > This will configure your local Docker client with the right credentials to be able to push images to the Bluemix Container Registry.
+
+1. Retrieve the name of the namespace you are going to use to push your Docker images:
+
+   ```
+   bx cr namespace-list
+   ```
+
+   > If you don't have a namespace, you can create one with `bx cr namespace-create mynamespace` as example.
+
+1. Check that you have installed **Container Registry plugin** and **Container Service plugin** with this command
+    ```
+    bx plugin list
+    ```
+    > Output:   
+          listing installed plug-ins...  
+          Plugin Name          Version   
+          container-service    0.1.238    
+          container-registry   0.1.109   
+
+1. Build the Docker image of the service
+
+   > In the following steps, make sure to replace `<namespace>` with your namespace name.
+
+   ```
+   docker build -t registry.ng.bluemix.net/twanatest/bluechatter_web:latest .   
+   ```
+    
+1. Push the image to the registry
+
+   ```
+   docker push registry.ng.bluemix.net/twanatest/bluechatter_web:latest
+   ``` 
+    
+3_3 Create a cluster
+---------
+     
+1. Create a Kubernetes cluster in Bluemix
+   
+    ```
+    bx cs cluster-create --name mycluster
+    ```
+    
+    > Note that you can also use an existing cluster
+   
+   1. Wait for your cluster to be deployed. This step can take a while, you can check the status of your cluster(s) by using:
+   
+      ```
+      bx cs clusters
+      ```
+   
+      Your cluster should be in the state *normal*.
+   
+   1. Ensure that the cluster workers are ready too:
+   
+      ```
+      bx cs workers mycluster
+      ```
+   
+      The workers should appear as *Ready*.
+        
+
+3_4 Deploy the cluster
+---------
+> Before deploying the cluster, make sure the steps above are complete and the cluster state is READY
+
+1. Retrieve the cluster configuration
+
+   ```
+   bx cs cluster-config mycluster
+   ```
+
+   The output will look like:
+
+   ```
+   Downloading cluster config for mycluster
+   OK
+   The configuration for mycluster was downloaded successfully. Export environment variables to start using Kubernetes.
+
+   export KUBECONFIG=/Users/Twana/.bluemix/plugins/container-service/clusters/mycluster/kube-config-prod-dal10-mycluster.yml
+   ```
+
+1. Copy and paste the `export KUBECONFIG=...` line into your shell.
+
+1. Confirm the configuration worked by retrieving the cluster nodes:
+
+   ```
+   kubectl get nodes
+   ```
+   > Output:  
+   NAME             STATUS    AGE  
+   169.47.241.223   Ready     2m  
+
+1. Modify the deployment.yml to point to the image in the Bluemix Container Registry by replacing the *namespace* value.
+
+1. Deploy the BlueChatter application to the cluster
+
+    ```
+    kubectl create -f kubernetes.yml
+    ```
+    
+
+1. Get the public IP address for the load balancer and the port for the app in the service's details.
+    ```
+    kubectl describe service bluechatter
+    ```
+   
+   Endpoint running app: 169.47.241.223:30089
+   
+**Done!**
+    
+3_5 View Cluster Graphically 
+-------------------------------------------
+1. To view the clusters graphically we are going to use **Cloud**weave to see graphically the different pods and overall cluster setup. 
+    
+    Sign up for a free **Cloud**weave account: https://cloud.weave.works/signup and follow the steps to create your account. 
+
+1. Click on the "Explore" option and run the commands provided by **Cloud**weave to connect to your cluster. This should be something like this:
+    ```
+    kubectl apply -n kube-system -f \
+       "https://cloud.weave.works/k8s/scope.yaml?service-token=<TOEKN-XXXXXXXXXXXXXXXXXXX>-version=$(kubectl version | base64 | tr -d '\n')"
+    ```
+    
+    Once **Cloud**weave is setup you then should see your cluster pods graphically. 
+    In the screenshots below you can see the BlueChatter Web and Redis pods created on the right.
+    ![Application Diagram](ReadMeImages/wavecloud.png)
+
+1. **Additionally** we can also view logs locally if you don't like using the graphical tool, a tool like kubetail can be used to tail the logs of multiple pods https://github.com/johanhaleby/kubetail. Once installed you can do kutetail fibo to watch the Fibonacci service logs.
+
+    
+3_6 Manual Scaling 
+------------------
+1. First, run a command to see the number of running pods, we should see one pod for the *redis service* and one pod for the *web application*.
+    ```
+    kubectl get pods    
+    ```
+1. Scale from 1 to 4 replicas, note in the kubernetes.yml we have set to have 1 replicas so with this command we tell it to have 4 replicas.
+    ```
+    kubectl scale --replicas=4 -f kubernetes.yml
+    ```
+    ![Application Diagram](ReadMeImages/PodScale.png)
+
+1. Scale back down to 1 replica 
+    ```
+    kubectl scale --replicas=1 -f kubernetes.yml
+    ```
+
+3_7 Automatic Scaling
+---------------------
+1. Configure the automatic scaling for Kubernetes
+    ```
+    kubectl autoscale -f kubernetes.yml --cpu-percent=10 --min=1 --max=10
+    ```
+    This tells Kubernetes to maintain an average of 10% CPU usage over all pods in our deployment and to create at most 10 pod replicas.
+    
+    In order to see Auto Scaling in action, we would need to drive some traffic to the BlueChatter app in order to see the application scaling. You can use something like [Apache JMeter](http://jmeter.apache.org/) to drive traffic to the application, in this demo we will not cover [Apache JMeter](http://jmeter.apache.org/) given that there are many tutorials covering [Apache JMeter](http://jmeter.apache.org/).
+
+1. Use this command to see the Auto Scaling been setup 
+    ```
+    kubectl get hpa
+    ```
+    > Output: 
+    ```
+    NAME      REFERENCE          TARGET    CURRENT     MINPODS   MAXPODS   AGE
+    redis     Deployment/redis   10%       <waiting>   1         10        14m
+    web       Deployment/web     10%       <waiting>   1         10        14m
+    ```
+1. Remove the hpa
+    ```
+    kubectl delete hpa redis
+    kubectl delete hpa web
+    ```    
+
+1. Scale back to down to 1 replica
+    ```
+    kubectl scale --replicas=1 -f kubernetes.yml
+    ```
+**Done!**    
+
+
+Useful Kubernetes commands
+===========================
+1. Get services, pods and deployments 
+   ```
+   kubectl get service
+   kubectl get pods
+   kubectl get deployments 
+   ```
+   
+1. Delete services, pods and deployments 
+    ```
+    kubectl delete service <service-name>
+    kubectl delete pods <pod-name>
+    kubectl delete deployments <deployments-name>
+    ``
+    
+1. Get cluster node IP Address and state
+   ```
+   bx cs workers mycluster
+   ```
+ 
+1. Get the port (NodePort)
+    ```
+    kubectl describe service web
+    ```
+    
+Additional Links
+=======
+For additional information about on IBM Containers see the the following links:  
 [Bluemix documentation](https://console.ng.bluemix.net/docs/containers/container_index.html)  
 [Docker user manual PDF](https://github.com/IBM-Bluemix/bluechatter/blob/master/ReadMeImages/docker.PDF)   
-[Debugging docker application](https://www.ibm.com/blogs/bluemix/2015/09/using-node-inspector-ibm-containers/)  
 [A-Z Video docker container setup](https://www.youtube.com/watch?v=TfCj2qOXb1g)  
-[Scaling and Auto-Recovery with IBM Containers](https://www.ibm.com/blogs/bluemix/2015/11/spring-boot-application-scaling-auto-recovery-ibm-containers/)  
-
-
-Testing
-=======
-
-After the app is deployed, you can test it by opening two different browsers
-and navigating to the URL of the app.  YOU MUST USE TWO DIFFERENT BROWSERS
-AND NOT TWO TABS IN THE SAME BROWSER.  Since we utilize long polling
-browsers will not make the same request to the same endpoint
-while one request is still pending.  You can also open the app in a browser
-on your mobile device and try it there as well.  
+[Deploy Kubernetes cluster to Bluemix](https://console.ng.bluemix.net/docs/containers/cs_apps.html#cs_apps)
 
 License
 =======
-
-
 This code is licensed under Apache v2.  See the LICENSE file in the root of the repository.
 
 Dependencies

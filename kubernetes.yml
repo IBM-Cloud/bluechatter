@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        bluechatter: redis
+    spec:
+      containers:
+      - image: redis
+        name: redis
+      restartPolicy: Always
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    bluechatter: redis
+  name: redis
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 55555
+    targetPort: 0
+  selector:
+    bluechatter: redis
+---
+
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        bluechatter: web
+    spec:
+      containers:
+      - name: web
+        image: registry.ng.bluemix.net/<Add-Your-Namespace-Here>/bluechatter_web
+        ports:
+        - containerPort: 80
+        - containerPort: 8080
+      restartPolicy: Always
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    bluechatter: web
+  name: web
+spec:
+  type: NodePort
+  ports:
+  - name: "80"
+    port: 80
+    nodePort: 30089
+  selector:
+    bluechatter: web
