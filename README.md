@@ -7,8 +7,8 @@ The demo demonstrates how quickly you can deploy and scale your application wher
 
 
 See how the browser chat application looks like:
-![Application Diagram](ReadMeImages/viewapp.png)  
-[https://bluechattercontainergroup.mybluemix.net/](https://bluechattercontainergroup.mybluemix.net/)  
+[![Application Diagram](ReadMeImages/viewapp.png)](https://bluechattercontainergroup.mybluemix.net/)
+Live Demo: [https://bluechattercontainergroup.mybluemix.net/](https://bluechattercontainergroup.mybluemix.net/)  
 
 Table of contents
 =================
