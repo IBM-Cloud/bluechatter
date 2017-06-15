@@ -1,6 +1,11 @@
 BlueChatter Overview
 ======================
 
+[![Node Version](https://img.shields.io/badge/node-6.11.0-green.svg)](#)
+[![GitHub contributors](https://img.shields.io/github/contributors/IBM-Bluemix/bluechatter.svg)](https://github.com/IBM-Bluemix/bluechatter/graphs/contributors)
+[![GitHub issues](https://img.shields.io/github/issues/IBM-Bluemix/bluechatter.svg)](https://github.com/IBM-Bluemix/bluechatter/issues)
+[![license](https://img.shields.io/github/license/IBM-Bluemix/bluechatter.svg)](/LICENSE)
+
 The BlueChatter app is a simple chat/IRC type application for your browser which allows multiple users to chat when online at the same time. 
 The sample app is used to showcase how to deploy and scale a chat application using Cloud Foundry and Docker container service and Kubernetes approach. 
 The demo demonstrates how quickly you can deploy and scale your application where been it's a Cloud Foundry, Docker Container Service or Kubernetes Cluster. 
@@ -164,12 +169,11 @@ Here we are going to look on how to deploy the BlueChatter application on a Dock
 2_1 Setup
 ---------
 
-1. Create a Bluemix Account  
-[Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
+1. [Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
 
 1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
 
-1. **Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the "docker" command in your terminal window, if you see the list of docker commands, then you are ready to go.**
+1. Install Docker using the [Docker installer](https://www.docker.com/), once installation completed, test if docker installed by typing the `docker` command in your terminal window. If you see the list of docker commands, then you are ready to go.
 
 1. Install the IBM Bluemix Container Service plug-in to execute commands to IBM Bluemix containers from your terminal window. Install Container Service plug-in by running this command if on OS X.
   ```
