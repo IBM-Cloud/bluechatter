@@ -24,12 +24,12 @@ Table of contents
       * [Auto Scaling](#auto-scaling)
   * [2.0 Docker Deployment Approach](#2-docker-deployment-approach)
     * [2.1 Setup](#2_1-setup)
-    * [2.2 Build & run container locally](#2_2-build-&-run-container-locally)
+    * [2.2 Build and Run container locally](#2_2-build-and-run-container-locally)
     * [2.3 Run container on Bluemix](#2_3-run-container-on-bluemix)
     * [2.4 Container Scaling](#2_4-container-scaling)
     * [2.5 Reporting](#2_5-reporting)
     * [2.6 Vulnerability Advisor](#2_6-vulnerability-advisor)
-    * [2.7 Why use Docker Containers on Bluemix?](#2_7-why-use-docker-containers-on-bluemix?)
+    * [2.7 Why use Docker Containers on Bluemix?](#2_7-why-use-docker-containers-on-bluemix%3F)
   * [3.0 Kubernetes Deployment Approach](#3-kubernetes-deployment-approach)
     * [3.1 Requirements](#3_1-requirements)
     * [3.2 Build the Docker image](#3_2-build-the-docker-image)
@@ -38,8 +38,9 @@ Table of contents
     * [3.5 View Cluster Graphically ](#3_5-view-cluster-graphically)
     * [3.6 Manual Scaling](#3_6-manual-scaling)
     * [3.7 Automatic Scaling](#3_7-automatic-scaling) 
-    * [3.8 Why use the Kubernetes service on Bluemix?](#3_8-Why-use-the-Kubernetes-service-on-Bluemix?)
+    * [3.8 Why use the Kubernetes service on Bluemix?](#3_8-Why-use-the-Kubernetes-service-on-Bluemix%3F)
   * [Useful Kubernetes commands](#useful-kubernetes-commands)
+  * [Additional Links](#additional-links)
   * [License](#license)
   * [Dependencies](#dependencies)
 
@@ -92,12 +93,11 @@ Using the Deploy To Bluemix button will automatically set up several things for 
 1 Cloud Foundry Deployment Approach
 =================================
 
-1. Create a Bluemix Account  
-[Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
+1. [Signup](https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps) for Bluemix, or use an existing account.
 
-1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool
+1. Download and install the [Cloud-foundry CLI](https://github.com/cloudfoundry/cli) tool.
 
-1. If you have not already, [download node.js 6.7.0 or later][https://nodejs.org/download/] and install it on your local machine.
+1. Download and install [Node.js 6.11.0 or later](https://nodejs.org/en/download/) on your local machine.
 
 1. Clone the app to your local environment from your terminal using the following command
   ```
@@ -126,7 +126,7 @@ Using the Deploy To Bluemix button will automatically set up several things for 
   cf push
   ```
 
-**Done**, now go to the staging domain(`<host>.mybluemix.net`.) and see your app running.
+**Done**, now visit the app url `<host>.mybluemix.net` to see your app running.
 
 
 Scaling Your Cloud Foundry Application
@@ -191,7 +191,7 @@ Here we are going to look on how to deploy the BlueChatter application on a Dock
   ```
 
 
-2_2 Build & run container locally
+2_2 Build and Run container locally
 ---------------------------------
 
 1. Build your docker container
@@ -348,7 +348,7 @@ A Kubernetes service groups a set of pods and provides network connection to the
 * [Bluemix CLI](https://clis.ng.bluemix.net/ui/home.html)
 * [Bluemix Container Registry plugin](https://console.ng.bluemix.net/docs/cli/plugins/registry/index.html)
 * [Bluemix Container Service plugin](https://console.ng.bluemix.net/docs/containers/cs_cli_devtools.html)
-* [Node.js](https://nodejs.org), version 6.9.1 (or later)
+* [Node.js](https://nodejs.org), version 6.11.0 (or later)
 * [Kubernetes CLI (kubectl)](https://kubernetes.io/docs/tasks/kubectl/install/) version 1.5.3 (or later)
 * [Docker CLI](https://docs.docker.com/engine/installation/) version 1.9 (or later)
 
@@ -600,9 +600,9 @@ For additional information about on IBM Containers see the the following links:
 
 License
 =======
-This code is licensed under Apache v2.  See the LICENSE file in the root of the repository.
+This code is licensed under Apache 2.0 (See the [LICENSE](/LICENSE) file).
 
 Dependencies
 ============
 
-For a list of 3rd party dependencies that are used see the package.json file in the root of the repository.
+For a list of 3rd party dependencies that are used see the [package.json](/package.json) file.
