@@ -166,7 +166,6 @@ In the next step, you will configure **kubectl** to point to your newly created 
    ```
    bx cs cluster-config <cluster-name>
    ```
-   ​
 3. Copy and paste the **export** command to set the KUBECONFIG environment variable as directed. To verify whether the KUBECONFIG environment variable is set properly or not, run this command
   `echo $KUBECONFIG`
 
@@ -174,13 +173,11 @@ In the next step, you will configure **kubectl** to point to your newly created 
    ```
    kubectl cluster-info
    ```
-   ​
 5. [Helm](https://helm.sh/) helps you manage Kubernetes applications through Helm Charts — Helm Charts helps you define, install, and upgrade even the most complex Kubernetes application. Initialize Helm in your cluster.
 
    ```
    helm init
    ```
-
 
 2_4 Build the Node.js application 
 ---------
@@ -230,7 +227,7 @@ In the next step, you will configure **kubectl** to point to your newly created 
           container-service    0.1.328   
           dev                  1.0.4    
 
-7. Modify the kubernetes.yml with replacing the **<namespace>** with your image namespace. ![Application Diagram](ReadMeImages/code-snipts.png)  
+7. Modify the kubernetes.yml with replacing the **namespace** with your namespace. ![Application Diagram](ReadMeImages/code-snipts.png)  
 
 
 8. Build the Docker image of the service
@@ -279,7 +276,7 @@ In the next step, you will configure **kubectl** to point to your newly created 
    ```
    > Output:  
    > NAME             STATUS    AGE  
-   > 169.47.241.223   Ready     2m  
+   > 10.44.103.74    Ready     2m  
 
 4. Deploy the BlueChatter application to the cluster
   ```
@@ -297,19 +294,16 @@ In the next step, you will configure **kubectl** to point to your newly created 
    ```
    bx cs workers <your-cluster>
    ```
-   {: pre}
+   
    ```
    OK
    ID                                                 Public IP        Private IP      Machine Type   State    Status
    kube-hou02-pa95994f682be3443fbc92959175674f84-w1   173.193.85.219   10.44.103.74   u1c.2x4        normal   Ready
    ```
-   {: screen}
-
 7. Retrieve the **port** assigned to your application.
    ```
    kubectl get services
    ```
-   {: pre}
    and locate your service in the list:
    ```
    NAME  		CLUSTER-IP    		EXTERNAL-IP   PORT(S)			AGE
@@ -324,7 +318,6 @@ In the next step, you will configure **kubectl** to point to your newly created 
    `http://worker-ip-address:portnumber`
 
    **Example:** http://173.193.85.219:30089
-
 
 2_6 View Cluster Graphically 
 -------------------------------------------
