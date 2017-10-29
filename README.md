@@ -95,7 +95,7 @@ When one chat server receives a chat message it publishes an event to Redis cont
 
 7. Connect and login to Bluemix `$ bx login -a https://api.ng.bluemix.net`
 8. Target your account ORG and SPACE `bx target -o ORG -s SPACE`
-9. Create a Redis service for the app to use, we will use the RedisCloud service. `$ bx cf create-service rediscloud 30mb redis-chatter`
+9. Create a Redis service for the app to use, we will use the RedisCloud service. `$ bx cf create-service compose-for-redis Standard redis-chatter
 10. Push the application `bx cf push`
 
 
