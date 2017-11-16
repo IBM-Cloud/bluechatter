@@ -8,7 +8,7 @@
   "dependencies": {
     "cfenv": "^1.0.0",
     "commander": "^2.6.0",
-    "express": "3.4.8",
+    "express": "4.16.0",
     "http-post": "^0.1.1",
     "nconf": "^0.7.2",
     "redis": "*"
