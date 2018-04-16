@@ -1,4 +1,4 @@
-FROM registry.ng.bluemix.net/ibmnode:latest
+FROM ibmcom/ibmnode:latest
 COPY ./ bluechatter
 WORKDIR bluechatter
 RUN npm install -d --production
