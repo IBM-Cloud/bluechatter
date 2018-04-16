@@ -22,6 +22,7 @@ var cfenv = require("cfenv");
 var pkg   = require("./package.json");
 var redis = require('redis');
 var nconf = require('nconf');
+const { URL } = require('url');
 
 var appEnv = cfenv.getAppEnv();
 nconf.env();
@@ -33,23 +34,56 @@ app.set('port', appEnv.port || 3000);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-var redisService = appEnv.getService('redis-chatter');
-var credentials;
-if(!redisService || redisService == null) {
-  if(isDocker) {
+// Start by setting basic 'local' credentials:
+
+if(isDocker) {
     credentials = {"hostname":"redis", "port":6379};
-  } else {
-    credentials = {"hostname":"127.0.0.1", "port":6379};
-  }
 } else {
-  if(isDocker) {
-    console.log('The app is running in a Docker container on Bluemix.')
-  }
-  credentials = redisService.credentials;
+    credentials = {"hostname":"127.0.0.1", "port":6379};
 }
 
-// We need 2 Redis clients one to listen for events, one to publish events
-var subscriber = redis.createClient(credentials.port, credentials.hostname);
+// Look in VCAP_SERVICES for one or other type of Redis service, and pull it's credentials:
+
+var connectionString;
+if (process.env.VCAP_SERVICES) {
+    var env = JSON.parse(process.env.VCAP_SERVICES);
+    console.log('Looking for compose-for-redis credentials...');
+    if (env['compose-for-redis']) {
+        connectionString = env['compose-for-redis'][0]['credentials']['uri'];
+        url_hostname = new URL(connectionString).hostname;
+        url_port = new URL(connectionString).port;
+        credentials = {"hostname":url_hostname, "port":url_port};
+    } else {
+        console.log('There appears to be no compose-for-redis service bound to this application.');
+        console.log('Looking for rediscloud credentials...');
+        if (env['rediscloud']) {
+            credentials = env['rediscloud'][0]['credentials'];
+        } else {
+            console.log('There appears to be no redis-cloud service bound to this application.');
+        }
+    }
+}
+
+// We need two Redis clients - one to listen for events, and one to publish events.
+// The way we call redis.createClient() will depend on how we got on above:
+
+if(connectionString != null) {
+    if(connectionString.includes("rediss")) {
+        var subscriber = redis.createClient(connectionString,  
+                  { tls: { servername: new URL(connectionString).hostname} }
+        );
+        var publisher = redis.createClient(connectionString,
+                  { tls: { servername: new URL(connectionString).hostname} }
+        );
+    } else {
+        var subscriber = redis.createClient(connectionString);
+        var publisher = redis.createClient(connectionString)
+    }
+} else {
+    var subscriber = redis.createClient(credentials.port, credentials.hostname);
+    var publisher = redis.createClient(credentials.port, credentials.hostname);
+}
+
 subscriber.on('error', function(err) {
   if (isDocker && err.message.match('getaddrinfo EAI_AGAIN')) {
     console.log('Waiting for IBM Containers networking to be available...')
@@ -70,7 +104,7 @@ subscriber.on('connect', function() {
   });
   subscriber.subscribe('chatter');
 });
-var publisher = redis.createClient(credentials.port, credentials.hostname);
+
 publisher.on('error', function(err) {
   if (isDocker && err.message.match('getaddrinfo EAI_AGAIN')) {
     console.log('Waiting for IBM Containers networking to be available...')
@@ -86,8 +120,6 @@ if (credentials.password != '' && credentials.password != undefined) {
     subscriber.auth(credentials.password);
     publisher.auth(credentials.password);
   }
-
-
 
 // Serve up our static resources
 app.get('/', function(req, res) {
