@@ -62,6 +62,13 @@ if (process.env.VCAP_SERVICES) {
             console.log('There appears to be no redis-cloud service bound to this application.');
         }
     }
+} else if (process.env.COMPOSE_REDIS_URI) {
+  connectionString = process.env.COMPOSE_REDIS_URI
+  url_hostname = new URL(connectionString).hostname
+  url_port = new URL(connectionString).port
+  password = new URL(connectionString).password
+
+  credentials = {"hostname": url_hostname, "port": url_port, "password": password};
 }
 
 // We need two Redis clients - one to listen for events, and one to publish events.
@@ -69,7 +76,7 @@ if (process.env.VCAP_SERVICES) {
 
 if(connectionString != null) {
     if(connectionString.includes("rediss")) {
-        var subscriber = redis.createClient(connectionString,  
+        var subscriber = redis.createClient(connectionString,
                   { tls: { servername: new URL(connectionString).hostname} }
         );
         var publisher = redis.createClient(connectionString,
