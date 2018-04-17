@@ -62,7 +62,7 @@ if (process.env.VCAP_SERVICES) {
             console.log('There appears to be no redis-cloud service bound to this application.');
         }
     }
-} else {
+} else if (process.env.COMPOSE_REDIS_URI) {
   connectionString = process.env.COMPOSE_REDIS_URI
   url_hostname = new URL(connectionString).hostname
   url_port = new URL(connectionString).port
